@@ -1,0 +1,91 @@
+2024-03-10 15:33:23,299:INFO:HTTP Request: GET http://localhost:8650/startup-events "HTTP/1.1 200 OK"
+2024-03-10 15:33:23,307:INFO:HTTP Request: HEAD http://localhost:8650/ "HTTP/1.1 200 OK"
+2024-03-10 15:33:37,764:INFO:HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2024-03-10 15:33:54,956:INFO:HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2024-03-10 15:34:16,648:INFO:HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2024-03-10 15:34:29,007:INFO:HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2024-03-10 16:16:11,872:INFO:HTTP Request: GET http://localhost:8650/startup-events "HTTP/1.1 200 OK"
+2024-03-10 16:16:11,879:INFO:HTTP Request: HEAD http://localhost:8650/ "HTTP/1.1 200 OK"
+2024-03-10 16:16:24,356:INFO:HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2024-03-10 16:17:36,924:INFO:HTTP Request: GET http://localhost:8650/startup-events "HTTP/1.1 200 OK"
+2024-03-10 16:17:36,932:INFO:HTTP Request: HEAD http://localhost:8650/ "HTTP/1.1 200 OK"
+2024-03-10 16:17:49,976:INFO:HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2024-03-10 16:18:42,109:INFO:HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2024-03-10 16:28:45,267:INFO:HTTP Request: GET http://localhost:8650/startup-events "HTTP/1.1 200 OK"
+2024-03-10 16:28:45,274:INFO:HTTP Request: HEAD http://localhost:8650/ "HTTP/1.1 200 OK"
+2024-03-10 16:29:02,217:INFO:HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2024-03-10 16:30:27,923:INFO:HTTP Request: GET http://localhost:8650/startup-events "HTTP/1.1 200 OK"
+2024-03-10 16:30:27,931:INFO:HTTP Request: HEAD http://localhost:8650/ "HTTP/1.1 200 OK"
+2024-03-10 16:30:43,002:INFO:HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2024-03-10 16:46:33,717:INFO:HTTP Request: GET http://localhost:8650/startup-events "HTTP/1.1 200 OK"
+2024-03-10 16:46:33,724:INFO:HTTP Request: HEAD http://localhost:8650/ "HTTP/1.1 200 OK"
+2024-03-10 16:46:53,535:INFO:HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2024-03-10 17:17:17,775:INFO:HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2024-03-10 17:31:32,845:INFO:HTTP Request: GET http://localhost:8650/startup-events "HTTP/1.1 200 OK"
+2024-03-10 17:31:32,853:INFO:HTTP Request: HEAD http://localhost:8650/ "HTTP/1.1 200 OK"
+2024-03-10 17:31:41,305:ERROR:Error during inference: can only concatenate str (not "dict") to str
+2024-03-10 17:33:22,045:INFO:HTTP Request: GET http://localhost:8650/startup-events "HTTP/1.1 200 OK"
+2024-03-10 17:33:22,052:INFO:HTTP Request: HEAD http://localhost:8650/ "HTTP/1.1 200 OK"
+2024-03-10 17:33:35,873:INFO:HTTP Request: POST http://hades:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2024-03-10 17:54:54,771:INFO:HTTP Request: GET http://localhost:8650/startup-events "HTTP/1.1 200 OK"
+2024-03-10 17:54:54,778:INFO:HTTP Request: HEAD http://localhost:8650/ "HTTP/1.1 200 OK"
+2024-03-10 17:55:23,772:INFO:HTTP Request: POST http://hades:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2024-03-10 17:56:07,799:INFO:HTTP Request: POST http://hades:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2024-03-10 17:56:30,657:INFO:HTTP Request: POST http://hades:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2024-03-10 17:57:05,826:INFO:HTTP Request: POST http://hades:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2024-03-10 17:57:26,678:INFO:HTTP Request: POST http://hades:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2024-03-10 18:01:05,343:INFO:HTTP Request: POST http://hades:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2024-03-10 18:03:40,210:INFO:HTTP Request: GET http://localhost:8650/startup-events "HTTP/1.1 200 OK"
+2024-03-10 18:03:40,217:INFO:HTTP Request: HEAD http://localhost:8650/ "HTTP/1.1 200 OK"
+2024-03-10 18:04:00,253:INFO:HTTP Request: POST http://hades:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2024-03-10 18:07:34,880:INFO:HTTP Request: GET http://localhost:8650/startup-events "HTTP/1.1 200 OK"
+2024-03-10 18:07:34,888:INFO:HTTP Request: HEAD http://localhost:8650/ "HTTP/1.1 200 OK"
+2024-03-10 18:08:05,817:INFO:HTTP Request: POST http://hades:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2024-03-10 18:08:20,388:INFO:HTTP Request: POST http://hades:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2024-03-10 18:12:40,701:INFO:HTTP Request: GET http://localhost:8650/startup-events "HTTP/1.1 200 OK"
+2024-03-10 18:12:40,710:INFO:HTTP Request: HEAD http://localhost:8650/ "HTTP/1.1 200 OK"
+2024-03-10 18:13:12,414:INFO:HTTP Request: POST http://hades:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2024-03-10 18:13:20,427:INFO:HTTP Request: POST http://hades:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2024-03-10 18:13:33,002:INFO:HTTP Request: POST http://hades:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2024-03-10 18:13:50,127:INFO:HTTP Request: POST http://hades:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2024-03-10 18:14:17,304:INFO:HTTP Request: POST http://hades:8000/v1/chat/completions "HTTP/1.1 500 Internal Server Error"
+2024-03-10 18:14:17,304:INFO:Retrying request to /chat/completions in 0.901064 seconds
+2024-03-10 18:14:18,219:INFO:HTTP Request: POST http://hades:8000/v1/chat/completions "HTTP/1.1 500 Internal Server Error"
+2024-03-10 18:14:18,219:INFO:Retrying request to /chat/completions in 1.732074 seconds
+2024-03-10 18:16:57,940:INFO:HTTP Request: POST http://hades:8000/v1/chat/completions "HTTP/1.1 500 Internal Server Error"
+2024-03-10 18:16:57,940:ERROR:Error during inference: Internal Server Error
+2024-03-10 18:16:57,940:ERROR:Partial response object may not be available due to the error
+2024-03-10 18:16:57,977:INFO:Retrying request to /chat/completions in 0.791626 seconds
+2024-03-10 18:16:58,769:INFO:Retrying request to /chat/completions in 1.869980 seconds
+2024-03-10 18:17:00,640:ERROR:Error during inference: Connection error.
+2024-03-10 18:17:00,640:ERROR:Partial response object may not be available due to the error
+2024-03-10 18:21:15,056:INFO:HTTP Request: GET http://localhost:8650/startup-events "HTTP/1.1 200 OK"
+2024-03-10 18:21:15,064:INFO:HTTP Request: HEAD http://localhost:8650/ "HTTP/1.1 200 OK"
+2024-03-10 18:21:55,446:INFO:Retrying request to /chat/completions in 0.911512 seconds
+2024-03-10 18:21:56,359:INFO:Retrying request to /chat/completions in 1.717847 seconds
+2024-03-10 18:21:58,078:ERROR:Error during inference: Connection error.
+2024-03-10 18:21:58,078:ERROR:Partial response object may not be available due to the error
+2024-03-10 18:24:54,347:INFO:HTTP Request: POST http://hades:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2024-03-10 18:25:08,473:INFO:HTTP Request: POST http://hades:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2024-03-10 18:25:46,735:INFO:HTTP Request: POST http://hades:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2024-03-10 18:26:06,292:INFO:HTTP Request: POST http://hades:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2024-03-10 18:27:46,036:INFO:HTTP Request: POST http://hades:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2024-03-10 18:29:25,635:INFO:HTTP Request: POST http://hades:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2024-03-10 18:30:17,803:INFO:HTTP Request: POST http://hades:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2024-03-10 18:32:25,750:INFO:HTTP Request: POST http://hades:8000/v1/chat/completions "HTTP/1.1 500 Internal Server Error"
+2024-03-10 18:32:25,750:INFO:Retrying request to /chat/completions in 0.792247 seconds
+2024-03-10 18:32:26,559:INFO:HTTP Request: POST http://hades:8000/v1/chat/completions "HTTP/1.1 500 Internal Server Error"
+2024-03-10 18:32:26,560:INFO:Retrying request to /chat/completions in 1.930238 seconds
+2024-03-10 18:40:33,947:INFO:HTTP Request: POST http://hades:8000/v1/chat/completions "HTTP/1.1 500 Internal Server Error"
+2024-03-10 18:40:33,947:ERROR:Error during inference: Internal Server Error
+2024-03-10 18:40:33,947:ERROR:Partial response object may not be available due to the error
+2024-03-10 18:48:42,436:INFO:HTTP Request: POST http://hades:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2024-03-10 18:49:01,302:INFO:HTTP Request: POST http://hades:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2024-03-10 18:49:30,151:INFO:HTTP Request: POST http://hades:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2024-03-10 18:50:01,645:INFO:HTTP Request: POST http://hades:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2024-03-10 22:32:29,420:INFO:HTTP Request: POST http://hades:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2024-03-10 22:35:45,929:INFO:HTTP Request: POST http://hades:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2024-03-10 22:36:26,235:INFO:HTTP Request: POST http://hades:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2024-03-10 22:38:35,345:INFO:HTTP Request: POST http://hades:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2024-03-10 22:41:50,983:INFO:HTTP Request: POST http://hades:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2024-03-10 22:45:54,135:INFO:HTTP Request: POST http://hades:8000/v1/chat/completions "HTTP/1.1 200 OK"
