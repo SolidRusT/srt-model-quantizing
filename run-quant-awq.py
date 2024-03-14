@@ -1,15 +1,15 @@
 import torch
 #torch.cuda.is_available = lambda: False
-
+import os
 from awq import AutoAWQForCausalLM
 from transformers import AutoTokenizer
 import gc
 import cProfile, pstats
 
-access_token = "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"
+access_token = os.getenv('HUGGING_FACE_HUB_TOKEN')
 
-model_path = "mlabonne/NeuralBeagle14-7B"
-quant_path = 'temp/NeuralBeagle14-7B-AWQ'
+model_path = "temp/WhiteRabbitNeo-7B-v1.5a"
+quant_path = 'temp/WhiteRabbitNeo-7B-v1.5a-AWQ'
 
 quant_config = {
     "zero_point": True,
