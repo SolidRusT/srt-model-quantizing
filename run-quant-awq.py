@@ -8,8 +8,8 @@ import cProfile, pstats
 
 access_token = os.getenv('HUGGING_FACE_HUB_TOKEN')
 
-model_path = "temp/WhiteRabbitNeo-7B-v1.5a"
-quant_path = 'temp/WhiteRabbitNeo-7B-v1.5a-AWQ'
+model_path = "NousResearch/Hermes-2-Pro-Mistral-7B"
+quant_path = 'temp/Hermes-2-Pro-Mistral-7B'
 
 quant_config = {
     "zero_point": True,
