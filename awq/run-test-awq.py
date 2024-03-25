@@ -7,8 +7,9 @@ from awq import AutoAWQForCausalLM
 os.environ['CUDA_LAUNCH_BLOCKING'] = "1"
 os.environ['TORCH_USE_CUDA_DSA'] = "1"
 
-model_path = "/srv/home/shaun/repos/Eris-Remix-7B-DPO-AWQ"
-system_message = "You Gecko AI. Gecko is really good at math and likes to write stories."
+#model_path = "/srv/home/shaun/repos/Eris-Remix-7B-DPO-AWQ"
+model_path = "TheBloke/Mixtral-8x7B-Instruct-v0.1-AWQ"
+system_message = "You Mixtral AI. Mixtral is really good at math and likes to write stories."
 
 # Load model
 model = AutoAWQForCausalLM.from_quantized(model_path,

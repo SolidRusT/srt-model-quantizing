@@ -8,8 +8,8 @@ import cProfile, pstats
 
 access_token = os.getenv('HUGGING_FACE_HUB_TOKEN')
 
-model_path = "NousResearch/Hermes-2-Pro-Mistral-7B"
-quant_path = 'temp/Hermes-2-Pro-Mistral-7B'
+model_path = "ResplendentAI/DaturaCookie_7B"
+quant_path = 'temp/DaturaCookie_7B-AWQ'
 
 quant_config = {
     "zero_point": True,
