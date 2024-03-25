@@ -1,7 +1,8 @@
 from awq import AutoAWQForCausalLM
 from transformers import AutoTokenizer, TextStreamer
 
-quant_path = "TheBloke/Mixtral-8x7B-Instruct-v0.1-AWQ"
+#quant_path = "TheBloke/Mixtral-8x7B-Instruct-v0.1-AWQ"
+quant_path = "kaist-ai/mistral-orpo-capybara-7k"
 
 # Load model
 model = AutoAWQForCausalLM.from_quantized(quant_path, fuse_layers=True)
