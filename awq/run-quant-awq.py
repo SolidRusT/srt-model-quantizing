@@ -8,8 +8,8 @@ import cProfile, pstats
 
 access_token = os.getenv('HUGGING_FACE_HUB_TOKEN')
 
-model_path = "ResplendentAI/DaturaCookie_7B"
-quant_path = 'temp/DaturaCookie_7B-AWQ'
+model_path = "temp/dolphin-2.8-gemma-2b"
+quant_path = 'temp/dolphin-2.8-gemma-2b-AWQ'
 
 quant_config = {
     "zero_point": True,
