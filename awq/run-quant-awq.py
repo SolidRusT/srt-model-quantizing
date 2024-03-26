@@ -8,8 +8,8 @@ import cProfile, pstats
 
 access_token = os.getenv('HUGGING_FACE_HUB_TOKEN')
 
-model_path = "temp/dolphin-2.8-gemma-2b"
-quant_path = 'temp/dolphin-2.8-gemma-2b-AWQ'
+model_path = "temp/LewdMistral-7B-0.2"
+quant_path = 'temp/LewdMistral-7B-0.2-AWQ'
 
 quant_config = {
     "zero_point": True,
