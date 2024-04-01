@@ -16,14 +16,18 @@ export EXL2_HOME="${HOME}/repos/exllamav2"
 set -e
 
 # Functions
-function clone_model_repo() {
-    git lfs install
-    git clone "git@hf.co:${AUTHOR}/${MODEL}" "${MODEL_DIR}"
+function create_quant_repo() {
+    (cd "${MODEL_DIR}" && huggingface-cli repo create "${MODEL}-exl2" -y)
 }
 
 function clone_quant_repo() {
     git lfs install
     git clone "git@hf.co:${QUANTER}/${MODEL}-exl2" "${MODEL_DIR}/${MODEL}-exl2"
+}
+
+function clone_model_repo() {
+    git lfs install
+    git clone "git@hf.co:${AUTHOR}/${MODEL}" "${MODEL_DIR}"
 }
 
 function create_measurement() {
@@ -45,16 +49,21 @@ function upload_model_quant() {
     (cd "${MODEL_DIR}/${MODEL}-exl2" && git checkout "${branch}" && huggingface-cli lfs-enable-largefiles . && git add . && git commit -m "exl2 quantization for ${bpw}" && git push --set-upstream origin "${branch}")
 }
 
-## Main loop
+
 # Disable error stop for the following operations
 set +e
 
 # Prepare directories
 mkdir -p "${TEMP_DIR}" "${MODEL_DIR}"
 
-#clone_model_repo
-#clone_quant_repo
-#create_measurement
+# Re-enable error stop
+set -e
+
+## Main Program
+create_quant_repo
+clone_quant_repo
+clone_model_repo
+create_measurement
 
 # Run exl2 quantizations and handle branch operations
 for bpw in "${BPW[@]}"; do
@@ -86,6 +95,3 @@ for bpw in "${BPW[@]}"; do
     # Upload to huggingFace
     upload_model_quant
 done
-
-# Re-enable error stop
-set -e
