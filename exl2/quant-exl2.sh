@@ -33,40 +33,35 @@ function create_measurement() {
     (cd "${MODEL_DIR}/${MODEL}-exl2" && git checkout main && git lfs install && git add . && git commit -m "exl2 quantization measurements" && git push --set-upstream origin main)
 }
 
-function test_inference() {
-    for bpw in "${BPW[@]}"; do
-        branch=$(echo "${bpw}" | tr '.' '_')
-        (cd "${MODEL_DIR}/${MODEL}-exl2" && git checkout "${branch}")
-        python "${EXL2_HOME}/test_inference.py" -m "${MODEL_DIR}/${MODEL}-exl2/" -p "Once upon a time,"
-    done
+function quant_model() {
+    python "${EXL2_HOME}/convert.py" -i "${MODEL_DIR}/${MODEL}/" -o "${TEMP_DIR}/" -nr -m "${MODEL_DIR}/${MODEL}-exl2/measurement.json" -cf "${MODEL_DIR}/${MODEL}-exl2/" -b "${bpw}" -hb "${hb}"
 }
 
-function upload_model_quants() {
-    for bpw in "${BPW[@]}"; do
-        branch=$(echo "${bpw}" | tr '.' '_')
-        (cd "${MODEL_DIR}/${MODEL}-exl2" && git checkout "${branch}" && huggingface-cli lfs-enable-largefiles . && git add . && git commit -m "exl2 quantization for ${bpw}" && git push --set-upstream origin "${branch}")
-    done
+function test_inference() {
+    python "${EXL2_HOME}/test_inference.py" -m "${MODEL_DIR}/${MODEL}-exl2/" -p "Once upon a time,"
 }
+
+function upload_model_quant() {
+    (cd "${MODEL_DIR}/${MODEL}-exl2" && git checkout "${branch}" && huggingface-cli lfs-enable-largefiles . && git add . && git commit -m "exl2 quantization for ${bpw}" && git push --set-upstream origin "${branch}")
+}
+
+## Main loop
+# Disable error stop for the following operations
+set +e
 
 # Prepare directories
 mkdir -p "${TEMP_DIR}" "${MODEL_DIR}"
 
-# Clone repositories (Uncomment if needed)
-# clone_model_repo
-# clone_quant_repo
-
-# Take model measurements
+#clone_model_repo
+#clone_quant_repo
 #create_measurement
-
-# Disable error stop for the following operations
-set +e
 
 # Run exl2 quantizations and handle branch operations
 for bpw in "${BPW[@]}"; do
     branch=$(echo "${bpw}" | tr '.' '_')
     echo "branch: ${branch}, bpw: ${bpw}"
 
-    # Determine hb value based on bpw
+    # Determine head bit (hb) value based on bits per weight (bpw)
     hb=6
     [[ "${bpw}" == "8.0" || "${bpw}" == "6.5" ]] && hb=8
     echo "bpw: ${bpw}, hb: ${hb}"  # For verification
@@ -85,15 +80,12 @@ for bpw in "${BPW[@]}"; do
     fi
 
     # Perform the quantization
-    python "${EXL2_HOME}/convert.py" -i "${MODEL_DIR}/${MODEL}/" -o "${TEMP_DIR}/" -nr -m "${MODEL_DIR}/${MODEL}-exl2/measurement.json" -cf "${MODEL_DIR}/${MODEL}-exl2/" -b "${bpw}" -hb "${hb}"
-
-    # Commit and push changes (Uncomment if needed)
-    # (cd "${MODEL_DIR}/${MODEL}-exl2" && git add . && git commit -m "adding ${bpw} bpw quant" && git push --set-upstream
+    quant_model
+    # Test the result
+    test_inference
+    # Upload to huggingFace
+    upload_model_quant
 done
-
-# Test and upload model quantization results
-test_inference
-upload_model_quants
 
 # Re-enable error stop
 set -e
