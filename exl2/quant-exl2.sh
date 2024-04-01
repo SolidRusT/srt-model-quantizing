@@ -71,11 +71,12 @@ for bpw in "${BPW[@]}"; do
     [[ "${bpw}" == "8.0" || "${bpw}" == "6.5" ]] && hb=8
     echo "bpw: ${bpw}, hb: ${hb}"  # For verification
 
-    (cd "${MODEL_DIR}/${MODEL}-exl2" && git checkout main && git pull && git fetch --prune)
+    cd "${MODEL_DIR}/${MODEL}-exl2" && git checkout main && git pull && git fetch --prune
     # Check and switch to the correct branch
-    if git branch --list "${branch}" &>/dev/null; then
+    if git rev-parse --verify "refs/heads/${branch}" &>/dev/null; then
         echo "Branch ${branch} already exists locally."
-    elif git ls-remote --heads origin "${branch}" &>/dev/null; then
+        git checkout "${branch}"
+    elif git rev-parse --verify "refs/remotes/origin/${branch}" &>/dev/null; then
         echo "Branch ${branch} exists in remote. Checking it out."
         git checkout -t "origin/${branch}"
     else
