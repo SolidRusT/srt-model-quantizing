@@ -1,10 +1,11 @@
 #!/bin/bash
 # Version 0.3.2
 # Configuration
-export MODEL="Zebrafish-7B"
-export AUTHOR="mlabonne"
+export MODEL="bagel-dpo-34b-v0.5"
+export AUTHOR="jondurbin"
 export QUANTER="Suparious"
-export BPW=(3.5 4.25 5.0 6.5 8.0)
+#export BPW=(3.5 4.25 5.0 6.5 8.0)
+export BPW=(3.0 3.5 4.25 6.5)
 export CUDA_VISIBLE_DEVICES=0,1
 
 export OG_REPO="https://huggingface.co/${AUTHOR}/${MODEL}"
@@ -27,7 +28,7 @@ function clone_quant_repo() {
 
 function clone_model_repo() {
     git lfs install
-    git clone "git@hf.co:${AUTHOR}/${MODEL}" "${MODEL_DIR}"
+    git clone "git@hf.co:${AUTHOR}/${MODEL}" "${MODEL_DIR}/${MODEL}"
 }
 
 function create_measurement() {
@@ -91,7 +92,7 @@ for bpw in "${BPW[@]}"; do
     # Perform the quantization
     quant_model
     # Test the result
-    test_inference
+    #test_inference
     # Upload to huggingFace
     upload_model_quant
 done
