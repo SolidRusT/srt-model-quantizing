@@ -8,8 +8,8 @@ import cProfile, pstats
 
 access_token = os.getenv('HUGGING_FACE_HUB_TOKEN')
 
-model_path = "temp/LewdMistral-7B-0.2"
-quant_path = 'temp/LewdMistral-7B-0.2-AWQ'
+model_path = "Weyaxi/EulerMath-Mistral-7B"
+quant_path = 'temp/EulerMath-Mistral-7B-AWQ'
 
 quant_config = {
     "zero_point": True,

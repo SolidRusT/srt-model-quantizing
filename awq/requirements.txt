@@ -3,4 +3,5 @@ autoawq-kernels
 transformers
 torch
 pandas
-llm-quantkit
+protobuf
+#llm-quantkit
