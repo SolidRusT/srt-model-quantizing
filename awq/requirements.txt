@@ -4,4 +4,5 @@ transformers
 torch
 pandas
 protobuf
+sentencepiece
 #llm-quantkit
