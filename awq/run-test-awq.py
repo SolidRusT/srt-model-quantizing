@@ -2,6 +2,8 @@ import os
 import torch
 from transformers import AutoTokenizer, TextStreamer
 from awq import AutoAWQForCausalLM
+import signal
+import gc
 
 # Make CUDA operations synchronous to get accurate error reporting
 os.environ['CUDA_LAUNCH_BLOCKING'] = "1"
@@ -10,6 +12,22 @@ os.environ['TORCH_USE_CUDA_DSA'] = "1"
 #model_path = "/srv/home/shaun/repos/Eris-Remix-7B-DPO-AWQ"
 model_path = "TheBloke/Mixtral-8x7B-Instruct-v0.1-AWQ"
 system_message = "You Mixtral AI. Mixtral is really good at math and likes to write stories."
+
+# Function to clear GPU memory
+def clear_gpu_memory():
+    print("Clearing GPU memory...")
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+    gc.collect()
+    print("GPU memory cleared.")
+
+# Function to handle interrupt
+def handle_interrupt(signum, frame):
+    clear_gpu_memory()
+    exit(1)
+
+# Register interrupt handler
+signal.signal(signal.SIGINT, handle_interrupt)
 
 # Load model
 model = AutoAWQForCausalLM.from_quantized(model_path,
@@ -48,3 +66,4 @@ try:
     pass
 except Exception as e:
     print(f"Error during model generation: {e}")
+    clear_gpu_memory()  # Clear GPU memory in case of error
