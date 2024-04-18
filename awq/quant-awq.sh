@@ -35,10 +35,10 @@ function upload_model_quant() {
     git lfs install
     git add .
     git commit -m "adding AWQ model"
-    cp quant_config.json "${MODEL}-AWQ/"
+    cp ../quant_config.json .
     git add .
     git commit -m "adding quant config"
-    cp initial-readme.txt "${MODEL}-AWQ/README.md"
+    cp ../initial-readme.txt README.md
     git add .
     git commit -m "adding initial model card"
     git pull
