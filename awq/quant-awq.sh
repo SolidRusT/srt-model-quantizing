@@ -1,8 +1,7 @@
 #!/bin/bash
+export AUTHOR=$1
+export MODEL=$2
 
-# nbeerbower/Flammen-Bophades-7B
-export MODEL="Flammen-Bophades-7B"
-export AUTHOR="nbeerbower"
 export QUANTER="solidrust"
 export QUANT_SCRIPT="run-quant-awq.py"
 
@@ -23,7 +22,7 @@ function clone_quant_repo() {
 function quant_model() {
     python ${QUANT_SCRIPT} \
     --model_path ${AUTHOR}/${MODEL} \
-    --quant_path ${QUANTER}/${MODEL}-AWQ \
+    --quant_path ${MODEL}-AWQ \
     --zero_point True --q_group_size 128 --w_bit 4 --version GEMM
 }
 
@@ -32,10 +31,16 @@ function quant_model() {
 #}
 
 function upload_model_quant() {
-    cp quant_config.json "${QUANTER}/${MODEL}-AWQ/"
-    cd "${QUANTER}/${MODEL}-AWQ/"
+    cd "${MODEL}-AWQ/"
+    git lfs install
     git add .
     git commit -m "adding AWQ model"
+    cp quant_config.json "${MODEL}-AWQ/"
+    git add .
+    git commit -m "adding quant config"
+    cp initial-readme.txt "${MODEL}-AWQ/README.md"
+    git add .
+    git commit -m "adding initial model card"
     git pull
     git push
 }
