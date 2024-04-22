@@ -30,6 +30,11 @@ function quant_model() {
 #    python "${EXL2_HOME}/test_inference.py" -m "${MODEL_DIR}/${MODEL}-exl2/" -p "Once upon a time,"
 #}
 
+function update_readme() {
+    sed -i "s/{AUTHOR}/${AUTHOR}/g" README.md
+    sed -i "s/{MODEL}/${MODEL}/g" README.md
+}
+
 function upload_model_quant() {
     cd "${MODEL}-AWQ/"
     git lfs install
@@ -39,6 +44,7 @@ function upload_model_quant() {
     git add .
     git commit -m "adding quant config"
     cp ../initial-readme.txt README.md
+    update_readme
     git add .
     git commit -m "adding initial model card"
     git pull
