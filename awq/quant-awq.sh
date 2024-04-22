@@ -11,6 +11,11 @@ export CUDA_VISIBLE_DEVICES=0
 # Ensure that script stops on first error
 set -e
 
+function garbage_collect() {
+  rm -rf ${HOME}/.cache/huggingface/hub/models--*
+  rm -rf *-AWQ
+}
+
 function create_quant_repo() {
     (huggingface-cli repo create --organization ${QUANTER} ${MODEL}-AWQ -y)
 }
@@ -21,6 +26,7 @@ function update_readme() {
 }
 
 function clone_quant_repo() {
+    garbage_collect
     create_quant_repo
     git lfs install
     git clone "git@hf.co:${QUANTER}/${MODEL}-AWQ"
