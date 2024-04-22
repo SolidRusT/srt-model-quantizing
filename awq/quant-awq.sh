@@ -15,6 +15,11 @@ function create_quant_repo() {
     (huggingface-cli repo create --organization ${QUANTER} ${MODEL}-AWQ -y)
 }
 
+function update_readme() {
+    sed -i "s/{AUTHOR}/${AUTHOR}/g" README.md
+    sed -i "s/{MODEL}/${MODEL}/g" README.md
+}
+
 function clone_quant_repo() {
     create_quant_repo
     git lfs install
@@ -26,6 +31,7 @@ function clone_quant_repo() {
     git commit -m "add processing notice"
     git pull
     git push
+    cd ..
 }
 
 function quant_model() {
@@ -33,11 +39,6 @@ function quant_model() {
     --model_path ${AUTHOR}/${MODEL} \
     --quant_path ${MODEL}-AWQ \
     --zero_point True --q_group_size 128 --w_bit 4 --version GEMM
-}
-
-function update_readme() {
-    sed -i "s/{AUTHOR}/${AUTHOR}/g" README.md
-    sed -i "s/{MODEL}/${MODEL}/g" README.md
 }
 
 function upload_quant() {
@@ -54,6 +55,7 @@ function upload_quant() {
     git commit -m "adding initial model card"
     git pull
     git push
+    cd ..
 }
 
 # Main Program
