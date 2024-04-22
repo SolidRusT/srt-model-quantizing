@@ -1,0 +1,23 @@
+---
+inference: false
+---
+# {AUTHOR}/{MODEL} AWQ
+
+** PROCESSING .... ETA 30mins **
+
+- Model creator: [{AUTHOR}](https://huggingface.co/{AUTHOR})
+- Original model: [{MODEL}](https://huggingface.co/{AUTHOR}/{MODEL})
+
+### About AWQ
+
+AWQ is an efficient, accurate and blazing-fast low-bit weight quantization method, currently supporting 4-bit quantization. Compared to GPTQ, it offers faster Transformers-based inference with equivalent or better quality compared to the most commonly used GPTQ settings.
+
+AWQ models are currently supported on Linux and Windows, with NVidia GPUs only. macOS users: please use GGUF models instead.
+
+It is supported by:
+
+- [Text Generation Webui](https://github.com/oobabooga/text-generation-webui) - using Loader: AutoAWQ
+- [vLLM](https://github.com/vllm-project/vllm) - version 0.2.2 or later for support for all model types.
+- [Hugging Face Text Generation Inference (TGI)](https://github.com/huggingface/text-generation-inference)
+- [Transformers](https://huggingface.co/docs/transformers) version 4.35.0 and later, from any code or client that supports Transformers
+- [AutoAWQ](https://github.com/casper-hansen/AutoAWQ) - for use from Python code

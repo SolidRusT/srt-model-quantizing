@@ -5,7 +5,8 @@ export MODEL=$2
 export QUANTER="solidrust"
 export QUANT_SCRIPT="run-quant-awq.py"
 
-export CUDA_VISIBLE_DEVICES=0,1
+# Uncomment for single GPU
+export CUDA_VISIBLE_DEVICES=0
 
 # Ensure that script stops on first error
 set -e
@@ -15,8 +16,16 @@ function create_quant_repo() {
 }
 
 function clone_quant_repo() {
+    create_quant_repo
     git lfs install
     git clone "git@hf.co:${QUANTER}/${MODEL}-AWQ"
+    cd "${MODEL}-AWQ/"
+    cp ../processing-notice.txt README.md
+    update_readme
+    git add .
+    git commit -m "add processing notice"
+    git pull
+    git push
 }
 
 function quant_model() {
@@ -26,16 +35,12 @@ function quant_model() {
     --zero_point True --q_group_size 128 --w_bit 4 --version GEMM
 }
 
-#function test_inference() {
-#    python "${EXL2_HOME}/test_inference.py" -m "${MODEL_DIR}/${MODEL}-exl2/" -p "Once upon a time,"
-#}
-
 function update_readme() {
     sed -i "s/{AUTHOR}/${AUTHOR}/g" README.md
     sed -i "s/{MODEL}/${MODEL}/g" README.md
 }
 
-function upload_model_quant() {
+function upload_quant() {
     cd "${MODEL}-AWQ/"
     git lfs install
     git add .
@@ -52,8 +57,6 @@ function upload_model_quant() {
 }
 
 # Main Program
-create_quant_repo
 clone_quant_repo
 quant_model
-#test_inference
-upload_model_quant
+upload_quant
