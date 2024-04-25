@@ -52,6 +52,12 @@ function add_quant_config() {
   git_commit "adding quant config"
 }
 
+function add_model_card() {
+  cp ${SRT_REPO}/initial-readme.txt ${SRT_DATA}/${MODEL}-AWQ/README.md
+  update_readme
+  git_commit "add default model card"
+}
+
 function clone_quant_repo() {
   git clone "git@hf.co:${QUANTER}/${MODEL}-AWQ" ${SRT_DATA}/${MODEL}-AWQ
 }
@@ -71,3 +77,4 @@ clone_quant_repo
 processing_notice
 quant_model
 add_quant_config
+add_model_card
