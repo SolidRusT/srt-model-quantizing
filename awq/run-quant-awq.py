@@ -11,6 +11,7 @@ def quantize_model(model_path, quant_path, quant_config):
     model = AutoAWQForCausalLM.from_pretrained(model_path, trust_remote_code=True, use_cache=False)
     tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
     model.quantize(tokenizer, quant_config=quant_config)
+    print(f'Saving model at {quant_path}')
     model.save_quantized(quant_path)
     tokenizer.save_pretrained(quant_path)
     print(f'Model is quantized and saved at "{quant_path}"')
