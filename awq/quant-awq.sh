@@ -30,7 +30,7 @@ function git_commit() {
   message=${1:-"empty message"}
   logger "Commit the things: ${message}"
   # Usage:  huggingface-cli upload [repo_id] [local_path] [path_in_repo]
-  huggingface-cli upload "${QUANTER}/${MODEL}-AWQ/" "${SRT_DATA}/${MODEL}-AWQ/" . --commit-message "${message}"
+  huggingface-cli upload "${QUANTER}/${MODEL}-AWQ" "${SRT_DATA}/${MODEL}-AWQ/" . --commit-message "${message}"
 }
 
 function update_readme() {
