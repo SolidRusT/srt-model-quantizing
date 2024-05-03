@@ -66,7 +66,8 @@ function add_model_card() {
 
 function clone_quant_repo() {
   logger "add quant repo"
-  huggingface-cli download "${QUANTER}/${MODEL}-AWQ" --local-dir "${APP_HOME}/data/${MODEL}-AWQ/"
+  huggingface-cli download "${QUANTER}/${MODEL}-AWQ" --local-dir "${SRT_DATA}/${MODEL}-AWQ/"
+  logger "$(ls -al ${SRT_DATA}/${MODEL}-AWQ)"
 }
 
 function quant_model() {
@@ -75,6 +76,7 @@ function quant_model() {
     --model_path ${AUTHOR}/${MODEL} \
     --quant_path ${SRT_DATA}/${MODEL}-AWQ \
     --zero_point True --q_group_size 128 --w_bit 4 --version GEMM
+  logger "$(ls -al ${SRT_DATA}/${MODEL}-AWQ)"
   upload "adding AWQ model"
 }
 
