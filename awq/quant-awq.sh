@@ -29,7 +29,7 @@ function garbage_collect() {
 function upload() {
   message=${1:-"empty message"}
   logger "Uploading: ${message}"
-  huggingface-cli upload "${QUANTER}/${MODEL}-AWQ" "${SRT_DATA}/${MODEL}-AWQ/" "${MODEL}-AWQ" --commit-message "${message}"
+  huggingface-cli upload "${QUANTER}/${MODEL}-AWQ" "${SRT_DATA}/${MODEL}-AWQ/" . --commit-message "${message}"
 }
 
 function update_readme() {
