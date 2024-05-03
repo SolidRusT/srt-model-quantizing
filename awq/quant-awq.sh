@@ -24,11 +24,7 @@ function garbage_collect() {
 function git_commit() {
   wherami=$(pwd)
   cd ${SRT_DATA}/${MODEL}-AWQ
-  git lfs install
-  git add .
-  git commit -m "$1"
-  git pull
-  git push
+  huggingface-cli upload --commit-message "$1" ${QUANTER}/${MODEL} . .
   cd $wherami
 }
 
@@ -59,6 +55,7 @@ function add_model_card() {
 }
 
 function clone_quant_repo() {
+  huggingface-cli download "${QUANTER}/${MODEL}-AWQ" --local-dir "${APP_HOME}/data/${MODEL}-AWQ/"
   git clone "git@hf.co:${QUANTER}/${MODEL}-AWQ" ${SRT_DATA}/${MODEL}-AWQ
 }
 
