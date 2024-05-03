@@ -26,11 +26,10 @@ function garbage_collect() {
   rm -rf ${SRT_DATA}/*-AWQ
 }
 
-function git_commit() {
+function upload() {
   message=${1:-"empty message"}
-  logger "Commit the things: ${message}"
-  # Usage:  huggingface-cli upload [repo_id] [local_path] [path_in_repo]
-  huggingface-cli upload "${QUANTER}/${MODEL}-AWQ" "${SRT_DATA}/${MODEL}-AWQ/" . --commit-message "${message}"
+  logger "Uploading: ${message}"
+  huggingface-cli upload "${QUANTER}/${MODEL}-AWQ" "${SRT_DATA}/${MODEL}-AWQ/" "${MODEL}-AWQ" --commit-message "${message}"
 }
 
 function update_readme() {
@@ -49,20 +48,20 @@ function processing_notice() {
   logger "add processing notice"
   cp ${SRT_REPO}/processing-notice.txt ${SRT_DATA}/${MODEL}-AWQ/README.md
   update_readme
-  git_commit "add processing notice"
+  upload "add processing notice"
 }
 
 function add_quant_config() {
   logger "add quant config"
   cp ${SRT_REPO}/quant_config.json ${SRT_DATA}/${MODEL}-AWQ/quant_config.json
-  git_commit "adding quant config"
+  upload "adding quant config"
 }
 
 function add_model_card() {
   logger "add model card"
   cp ${SRT_REPO}/initial-readme.txt ${SRT_DATA}/${MODEL}-AWQ/README.md
   update_readme
-  git_commit "add default model card"
+  upload "add default model card"
 }
 
 function clone_quant_repo() {
@@ -76,7 +75,7 @@ function quant_model() {
     --model_path ${AUTHOR}/${MODEL} \
     --quant_path ${SRT_DATA}/${MODEL}-AWQ \
     --zero_point True --q_group_size 128 --w_bit 4 --version GEMM
-  git_commit "adding AWQ model"
+  upload "adding AWQ model"
 }
 
 # Main Program
