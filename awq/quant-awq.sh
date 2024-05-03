@@ -16,50 +16,62 @@ mkdir -p ${APP_HOME}
 # Ensure that script stops on first error
 set -e
 
+function logger() {
+  echo "8===D $1" | tee -a "${SRT_DATA}/quant-awq.log"
+}
+
 function garbage_collect() {
+  logger "Taking out the trash"
   rm -rf ${HOME}/.cache/huggingface/hub/models--*
   rm -rf ${SRT_DATA}/*-AWQ
 }
 
 function git_commit() {
-  wherami=$(pwd)
-  cd ${SRT_DATA}/${MODEL}-AWQ
-  huggingface-cli upload --commit-message "$1" ${QUANTER}/${MODEL} . .
-  cd $wherami
+  message=${1:-"empty message"}
+  logger "Commit the things: ${message}"
+  # Usage:  huggingface-cli upload [repo_id] [local_path] [path_in_repo]
+  huggingface-cli upload "${QUANTER}/${MODEL}" "${SRT_DATA}/${MODEL}-AWQ/" . --commit-message "${message}"
 }
 
 function update_readme() {
+  logger "Spiff up the README"
+  # TODO: huggingface-cli upload username/my-space --remote https://example.com/data.csv
   sed -i "s/{AUTHOR}/${AUTHOR}/g" ${SRT_DATA}/${MODEL}-AWQ/README.md
   sed -i "s/{MODEL}/${MODEL}/g" ${SRT_DATA}/${MODEL}-AWQ/README.md
 }
 
 function create_quant_repo() {
+  logger "Create a new repo"
   (huggingface-cli repo create --organization ${QUANTER} ${MODEL}-AWQ -y)
 }
 
 function processing_notice() {
+  logger "add processing notice"
   cp ${SRT_REPO}/processing-notice.txt ${SRT_DATA}/${MODEL}-AWQ/README.md
   update_readme
   git_commit "add processing notice"
 }
 
 function add_quant_config() {
+  logger "add quant config"
   cp ${SRT_REPO}/quant_config.json ${SRT_DATA}/${MODEL}-AWQ/quant_config.json
   git_commit "adding quant config"
 }
 
 function add_model_card() {
+  logger "add model card"
   cp ${SRT_REPO}/initial-readme.txt ${SRT_DATA}/${MODEL}-AWQ/README.md
   update_readme
   git_commit "add default model card"
 }
 
 function clone_quant_repo() {
+  logger "add quant repo"
   huggingface-cli download "${QUANTER}/${MODEL}-AWQ" --local-dir "${APP_HOME}/data/${MODEL}-AWQ/"
-  git clone "git@hf.co:${QUANTER}/${MODEL}-AWQ" ${SRT_DATA}/${MODEL}-AWQ
 }
 
 function quant_model() {
+  logger "quantize the model"
   python ${SRT_REPO}/${QUANT_SCRIPT} \
     --model_path ${AUTHOR}/${MODEL} \
     --quant_path ${SRT_DATA}/${MODEL}-AWQ \
