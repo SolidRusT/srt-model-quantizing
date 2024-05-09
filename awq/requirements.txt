@@ -1,7 +1,7 @@
-autoawq
+autoawq>=0.2.5
 autoawq-kernels
-transformers
-torch
+transformers>=4.35.0
+torch>=2.0.1
 pandas
 protobuf
 sentencepiece
