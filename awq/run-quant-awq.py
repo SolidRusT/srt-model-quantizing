@@ -8,7 +8,7 @@ import argparse
 
 def quantize_model(model_path, quant_path, quant_config):
     gc.enable()
-    model = AutoAWQForCausalLM.from_pretrained(model_path, trust_remote_code=True, use_cache=False)
+    model = AutoAWQForCausalLM.from_pretrained(model_path, trust_remote_code=True, use_cache=False, max_memory={0: "11GB",1: "11GB"})
     tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
     model.quantize(tokenizer, quant_config=quant_config)
     print(f'Saving model at {quant_path}')
