@@ -1,3 +1,4 @@
+# nano repos/srt-model-quantizing/awq/quant-awq.sh
 # huggingface-cli download rombodawg/Llama-3-8B-Base-Coder-v3.5-10k
 # export model="/home/ubuntu/.cache/huggingface/hub/models--922CA--Moniphi-3-v1/snapshots/0bc522cb055fb7b13248aa2f6bc293ef7a3f78bf"
 # alias convert="python $APP_HOME/repos/srt-model-quantizing/convert-pytorch-simple.py"
