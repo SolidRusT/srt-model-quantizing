@@ -70,7 +70,43 @@ function clone_quant_repo() {
   logger "$(ls -al ${SRT_DATA}/${MODEL}-AWQ)"
 }
 
+function download_model() {
+  huggingface-cli download "${AUTHOR}/${MODEL}"
+  logger "Downloading ${AUTHOR}/${MODEL} ..."
+}
+
+function pytorch_check() {
+  logger "Checking for pytorch binaries"
+  
+  # Get the latest snapshot directory
+  local snapshot_dir
+  snapshot_dir=$(ls -1d ${HOME}/.cache/huggingface/hub/models--${AUTHOR}--${MODEL}/snapshots/* | tail -n 1)
+  
+  # Check for pytorch .bin files
+  local pytorch_bins
+  pytorch_bins=$(find "${snapshot_dir}" -name "pytorch_model-0*.bin")
+
+  # Convert pytorch .bin files to safetensors if they exist
+  if [[ -n "${pytorch_bins}" ]]; then
+    local convert_script="${APP_HOME}/repos/srt-model-quantizing/convert-pytorch-simple.py"
+    local bin
+
+    for bin in ${pytorch_bins}; do
+      if ! python "${convert_script}" "${bin}"; then
+        logger "Error: Conversion failed for %s\n" "${bin}"
+        return 1
+      fi
+    done
+
+    printf "Conversion completed successfully.\n"
+  else
+    printf "No pytorch .bin files found for author '%s' and model '%s'.\n" "${AUTHOR}" "${MODEL}"
+  fi
+}
+
 function quant_model() {
+  download_model
+  pytorch_check
   logger "quantize the model"
   python ${SRT_REPO}/${QUANT_SCRIPT} \
     --model_path ${AUTHOR}/${MODEL} \
