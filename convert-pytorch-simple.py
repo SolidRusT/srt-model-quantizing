@@ -1,6 +1,7 @@
 # huggingface-cli download rombodawg/Llama-3-8B-Base-Coder-v3.5-10k
+# export model="/home/ubuntu/.cache/huggingface/hub/models--922CA--Moniphi-3-v1/snapshots/0bc522cb055fb7b13248aa2f6bc293ef7a3f78bf"
 # alias convert="python $APP_HOME/repos/srt-model-quantizing/convert-pytorch-simple.py"
-# convert $HOME/.cache/huggingface/hub/models--rombodawg--Llama-3-8B-Base-Coder-v3.5-10k/snapshots/290cefb72390860fb36c87a76dcd9d41b112561b/pytorch_model-00004-of-00004.bin
+# for bin in $(ls -1 $model/pytorch_model-0*.bin); do convert "$bin"; done
 import torch
 import argparse, os, glob
 from safetensors.torch import save_file
