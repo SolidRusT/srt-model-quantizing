@@ -1,5 +1,6 @@
 # huggingface-cli download rombodawg/Llama-3-8B-Base-Coder-v3.5-10k
-# python $APP_HOME/repos/srt-model-quantizing/convert-pytorch-simple.py $HOME/.cache/huggingface/hub/models--rombodawg--Llama-3-8B-Base-Coder-v3.5-10k/snapshots/290cefb72390860fb36c87a76dcd9d41b112561b/pytorch_model-00004-of-00004.bin
+# alias convert="python $APP_HOME/repos/srt-model-quantizing/convert-pytorch-simple.py"
+# convert $HOME/.cache/huggingface/hub/models--rombodawg--Llama-3-8B-Base-Coder-v3.5-10k/snapshots/290cefb72390860fb36c87a76dcd9d41b112561b/pytorch_model-00004-of-00004.bin
 import torch
 import argparse, os, glob
 from safetensors.torch import save_file
