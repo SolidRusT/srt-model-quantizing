@@ -17,8 +17,10 @@ for file in tensor_files:
 
     if args.unshare:
         for k in state_dict.keys():
-            state_dict[k] = state_dict[k].clone().detach()
+            # Ensure each tensor is detached, cloned, and made contiguous
+            state_dict[k] = state_dict[k].clone().detach().contiguous()
 
     out_file = os.path.splitext(file)[0] + ".safetensors"
     print(f" -- Saving {out_file}...")
     save_file(state_dict, out_file, metadata={"format": "pt"})
+    
