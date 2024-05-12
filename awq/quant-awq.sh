@@ -84,11 +84,11 @@ function pytorch_check() {
   pytorch_bins=$(find "${snapshot_dir}" -name "pytorch_model-0*.bin")
 
   if [[ -n "${pytorch_bins}" ]]; then
-    local convert_script="${APP_HOME}/repos/srt-model-quantizing/convert-pytorch-simple.py --use_gpu"
+    local convert_script="${APP_HOME}/repos/srt-model-quantizing/convert-pytorch-simple.py"
     local bin
 
     for bin in ${pytorch_bins}; do
-      if ! python "${convert_script}" "${bin}"; then
+      if ! python "${convert_script}" --use_gpu "${bin}"; then
         logger "Error: Conversion failed for ${bin}"
         return 1
       fi
