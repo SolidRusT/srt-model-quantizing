@@ -16,11 +16,11 @@ for file in tensor_files:
     state_dict = torch.load(file, map_location="cpu")
 
     if args.unshare:
-        for k in state_dict.keys():
-            # Ensure each tensor is detached, cloned, and made contiguous
-            state_dict[k] = state_dict[k].clone().detach().contiguous()
+        for k, v in state_dict.items():
+            new_tensor = v.clone().detach().contiguous()
+            state_dict[k] = new_tensor
+            print(f"Tensor {k} is now contiguous: {new_tensor.is_contiguous()}")
 
     out_file = os.path.splitext(file)[0] + ".safetensors"
     print(f" -- Saving {out_file}...")
-    save_file(state_dict, out_file, metadata={"format": "pt"})
-    
+    save_file(state_dict, out_memory_size="{out_file}", metadata={"format": "pt"})
