@@ -3,8 +3,8 @@ import os
 from app.config import Config
 from app.model_utils import setup_environment, download_model, check_pytorch_files
 from app.quantization import run_quantization
-from app.safetensors_conversion import convert_model_to_safetensors
-from app.template_manager import process_template
+from app.converter import convert_model_to_safetensors
+from app.template_parser import process_template
 from app.utils import create_logger
 
 # Initialize the logger
