@@ -17,7 +17,7 @@ mkdir -p ${APP_HOME}
 set -e
 
 function logger() {
-  echo "8===D $1" | tee -a "${SRT_DATA}/quant-awq.log"
+  printf "%s\n" "8===D $1" | tee -a "${SRT_DATA}/quant-awq.log"
 }
 
 function garbage_collect() {
@@ -40,7 +40,7 @@ function update_readme() {
 
 function create_quant_repo() {
   logger "Create a new repo"
-  (huggingface-cli repo create --organization ${QUANTER} ${MODEL}-AWQ -y)
+  huggingface-cli repo create --organization ${QUANTER} ${MODEL}-AWQ -y
 }
 
 function processing_notice() {
@@ -59,7 +59,7 @@ function add_quant_config() {
 function add_model_card() {
   logger "Add model card"
   cp ${SRT_REPO}/initial-readme.txt ${SRT_DATA}/${MODEL}-AWQ/README.md
-  update_readme
+  update_readed
   upload "Add default model card"
 }
 
