@@ -1,4 +1,3 @@
-```bash
 #!/bin/bash
 export AUTHOR=$1
 export MODEL=$2
@@ -77,7 +76,7 @@ function download_model() {
 
 function pytorch_check() {
   logger "Checking for pytorch binaries"
-  
+
   local snapshot_dir
   snapshot_dir=$(ls -1d ${HOME}/.cache/huggingface/hub/models--${AUTHOR}--${MODEL}/snapshots/* | tail -n 1)
 
@@ -114,11 +113,11 @@ function quant_model() {
 }
 
 # Main Program
-garbage_collect
-create_quant_repo
-clone_quant_repo
-processing_notice
+#garbage_collect
+#create_quant_repo
+#clone_quant_repo
+#processing_notice
 quant_model
 add_quant_config
 add_model_card
-```
+
