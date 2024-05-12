@@ -1,0 +1,14 @@
+quant-awq/
+│
+├── app/
+│   ├── __init__.py
+│   ├── config.py           # Configuration settings and constants
+│   ├── main.py             # Main script to run the quantization process
+│   ├── model_utils.py      # Model download, check, and upload utilities
+│   ├── quantization.py     # Handles the quantization process
+│   └── converter.py        # Converts PyTorch models to safetensors
+│
+├── data/                   # Data directory for storing models
+├── logs/                   # Log files
+├── repos/                  # Repository for templates and configs
+└── requirements.txt        # Dependencies
