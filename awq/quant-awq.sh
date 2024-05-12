@@ -1,3 +1,4 @@
+```bash
 #!/bin/bash
 export AUTHOR=$1
 export MODEL=$2
@@ -59,7 +60,7 @@ function add_quant_config() {
 function add_model_card() {
   logger "Add model card"
   cp ${SRT_REPO}/initial-readme.txt ${SRT_DATA}/${MODEL}-AWQ/README.md
-  update_readed
+  update_readme
   upload "Add default model card"
 }
 
@@ -120,3 +121,4 @@ processing_notice
 quant_model
 add_quant_config
 add_model_card
+```
