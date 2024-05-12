@@ -84,7 +84,7 @@ function pytorch_check() {
   pytorch_bins=$(find "${snapshot_dir}" -name "pytorch_model-0*.bin")
 
   if [[ -n "${pytorch_bins}" ]]; then
-    local convert_script="${APP_HOME}/repos/srt-model-quantizing/convert-pytorch-simple.py"
+    local convert_script="${APP_HOME}/repos/srt-model-quantizing/convert-pytorch-simple.py --use_gpu"
     local bin
 
     for bin in ${pytorch_bins}; do
