@@ -2,8 +2,8 @@
 
 ## Current Sprint
 - [x] Update model_utils.py to support safetensors and split model files
-- [ ] Implement PyTorch to safetensors conversion in converter.py
-- [ ] Update quantization.py to handle split safetensors files
+- [x] Implement PyTorch to safetensors conversion in converter.py
+- [x] Update quantization.py to handle split safetensors files
 - [ ] Enhance error handling and logging for new file formats
 
 ## Backlog
@@ -22,3 +22,11 @@
   - Added support for downloading split safetensors files
   - Implemented PyTorch to safetensors conversion
   - Updated file checking process to handle both formats
+- [x] Implement PyTorch to safetensors conversion in converter.py
+  - Added functionality to convert PyTorch files to safetensors
+  - Implemented handling of split safetensors files
+  - Added functions to load and save safetensors models, including split files
+- [x] Update quantization.py to handle split safetensors files
+  - Modified quantization process to work with safetensors format
+  - Integrated loading and saving of split safetensors files
+  - Added function to calculate total size of quantized model
