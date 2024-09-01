@@ -8,12 +8,12 @@ This roadmap outlines the planned improvements and tasks for the srt-model-quant
 - [x] Add a section on project structure and how to use the application.
 
 ## 2. Repository Restructuring
-- [ ] Create separate directories for AWQ and Exllama2 quantization methods.
-- [ ] Move relevant files from the root directory into appropriate subdirectories.
-- [ ] Consider creating a `common` or `shared` directory for any code used by both quantization methods.
+- [x] Create separate directories for AWQ and Exllama2 quantization methods.
+- [x] Move relevant files from the root directory into appropriate subdirectories.
+- [x] Consider creating a `common` or `shared` directory for any code used by both quantization methods.
 
 ## 3. Standardize Project Structure
-- [ ] Apply the structure used in the AWQ version2 folder to the Exllama2 implementation.
+- [x] Apply the structure used in the AWQ version2 folder to the Exllama2 implementation.
 - [ ] Ensure both methods have consistent file naming and organization.
 
 ## 4. Code Review and Refactoring
