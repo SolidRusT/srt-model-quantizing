@@ -5,4 +5,5 @@ torch>=2.0.1
 pandas
 protobuf
 sentencepiece
-#llm-quantkit
+requests
+tqdm

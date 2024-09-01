@@ -4,41 +4,34 @@ The Quant-AWQ Application automates the quantization of models using the Adaptiv
 
 ## Features
 
-- **Automated Model Quantization**: Automates the conversion of models to use lower-bit representations with a focus on AWQ techniques.
-- **Support for Multiple Model Formats**: Handles models in PyTorch format and converts them to `safetensors` for compatibility with different deployment scenarios.
-- **Template-based Documentation Management**: Automatically updates README files using predefined templates to reflect model processing stages and ensure accurate documentation.
-- **Robust Logging and Error Handling**: Offers comprehensive logging and error handling for traceability and troubleshooting throughout the quantization process.
+- **Automated Model Quantization**: Converts models to lower-bit representations using AWQ techniques.
+- **Support for Multiple Model Formats**: Handles PyTorch models and converts them to `safetensors` format.
+- **Template-based Documentation Management**: Automatically updates README files using predefined templates.
+- **Robust Logging and Error Handling**: Offers comprehensive logging and error handling throughout the quantization process.
 
 ## Prerequisites
 
-Before you begin, ensure your environment meets the following requirements:
-- Python version 3.8 or newer
-- Required Python packages installed from the provided requirements file
-
-```bash
-pip install -r requirements.txt
-```
+- Python 3.8 or newer
+- CUDA-compatible GPU (for GPU acceleration)
 
 ## Installation
 
-1. **Clone the Repository**:
-   Clone the source code to your local machine using the following commands:
-
+1. Clone the repository:
    ```bash
-   git clone https://your-repository-url.com/quant-awq.git
+   git clone https://github.com/your-repo/quant-awq.git
    cd quant-awq
    ```
 
-2. **Install Dependencies**:
-   Install the required dependencies:
-
+2. Install dependencies:
    ```bash
    pip install -r requirements.txt
    ```
 
 ## Usage
 
-To run the application, execute the main script with the required parameters:
+### Basic Usage
+
+Run the application with the following command:
 
 ```bash
 python app/main.py --author [author] --model [model]
