@@ -11,7 +11,8 @@
 - [x] Refactor main.py to follow the new workflow
 - [x] Implement idempotent logic for existing AWQ models
 - [x] Add error handling for various scenarios in the new workflow
-- [ ] Update documentation with new workflow details
+- [x] Update documentation with new workflow details
+- [x] Reorganize static content templates into a dedicated directory
 - [ ] Implement progress tracking for long-running operations
 - [ ] Add option to specify output bit-width (2-bit, 3-bit, 4-bit, 8-bit)
 

@@ -1,4 +1,11 @@
+# Include templates
+!templates/
+!templates/*
+
+# Ignore cache directories
 __pycache__/
+
+# Ignore data directory
 data/
 logs/
 repos/
