@@ -56,3 +56,23 @@ Contributions are welcome! Please see our [CONTRIBUTING.md](CONTRIBUTING.md) fil
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Docker Usage
+
+To use the Docker container:
+
+1. Build the Docker image:
+   ```bash
+   docker build -t srt-model-quantizing .
+   ```
+
+2. Run the container:
+   ```bash
+   docker run -v $(pwd)/data:/srt-model-quantizing/data \
+              -v $(pwd)/logs:/srt-model-quantizing/logs \
+              -e HF_ACCESS_TOKEN=your_token_here \
+              srt-model-quantizing \
+              python app/main.py --author mistralai --model Mistral-7B-Instruct-v0.3 --quanter your_quanter_name
+   ```
+
+   Replace `your_token_here` with your Hugging Face token and `your_quanter_name` with your desired quanter name.

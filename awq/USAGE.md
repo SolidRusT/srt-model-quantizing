@@ -65,4 +65,11 @@ The tool is designed to be idempotent. If you run the command multiple times:
 - For out-of-memory errors, try using a machine with more RAM or GPU memory.
 - Check the logs (in the `logs/` directory) for detailed error messages and the process flow.
 
+## Environment Variables
+
+- `HF_ACCESS_TOKEN`: Your Hugging Face access token.
+- `QUANTER`: Default quanter name to use if not provided via CLI argument.
+
+You can set these in a `.env` file in the project root or export them in your shell.
+
 For more specific issues or contributions, please refer to the [CONTRIBUTING.md](CONTRIBUTING.md) file.

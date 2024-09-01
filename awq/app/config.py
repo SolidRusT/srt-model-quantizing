@@ -2,8 +2,16 @@
 
 import os
 from dotenv import load_dotenv
+from huggingface_hub import whoami, HfApi
 
 load_dotenv()  # This loads the variables from .env file
+
+def get_default_quanter():
+    try:
+        user_info = whoami()
+        return user_info['name']
+    except Exception:
+        return None
 
 class Config:
     # Application Home Directory
@@ -24,8 +32,7 @@ class Config:
     LOG_DIR = os.path.join(APP_HOME, 'logs')
 
     # Quantization Process Configuration
-    QUANTER = os.getenv('QUANTER', 'solidrust')
-    QUANT_SCRIPT = 'run-quant-awq.py'
+    QUANTER = os.getenv('QUANTER') or get_default_quanter()
 
     # Environment Settings
     CUDA_VISIBLE_DEVICES = os.getenv('CUDA_VISIBLE_DEVICES', '0')  # Default to GPU 0
@@ -35,10 +42,10 @@ class Config:
 
     # Default Quantization Parameters
     QUANT_CONFIG = {
-        'zero_point': True,
-        'q_group_size': 128,
-        'w_bit': 4,
-        'version': 'GEMM'
+        'zero_point': True,  # Always set to True (default behavior)
+        'q_group_size': 128,  # Group size for quantization, can be adjusted
+        'w_bit': 4,  # Bit width for quantization, 4-bit is the standard for AWQ
+        'version': "GEMM"  # AWQ version, can be "GEMM" or "GEMV"
     }
 
     # Authentication Settings

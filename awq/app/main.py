@@ -39,13 +39,9 @@ def main(author: str, model: str, quanter: str = None):
 
         # Determine quanter if not provided
         if not quanter:
-            quanter = get_default_quanter(token)
-            if not quanter:
-                logger.error("Unable to determine default quanter. Please provide a quanter name.")
-                print("Unable to determine default quanter. Please provide a quanter name.")
-                return
-            logger.info(f"Using default quanter: {quanter}")
-            print(f"Using default quanter: {quanter}")
+            quanter = Config.QUANTER  # Use the default from Config if not provided via CLI
+            logger.info(f"Using default quanter from configuration: {quanter}")
+            print(f"Using default quanter from configuration: {quanter}")
 
         # 1. Download the original model
         model_path = os.path.join(Config.DATA_DIR, f"{author}-{model}")
