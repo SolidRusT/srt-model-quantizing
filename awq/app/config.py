@@ -24,7 +24,7 @@ class Config:
     LOG_DIR = os.path.join(APP_HOME, 'logs')
 
     # Quantization Process Configuration
-    QUANTER = 'solidrust'
+    QUANTER = os.getenv('QUANTER', 'solidrust')
     QUANT_SCRIPT = 'run-quant-awq.py'
 
     # Environment Settings
