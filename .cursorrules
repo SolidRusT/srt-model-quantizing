@@ -1,0 +1,23 @@
+1. **Project Overview**:
+   - This app is called 'srt-model-quantizing' and is developed by 'SolidRusT Networks'.
+   - This app functions as a pipeline for downloading models from Hugging Face, quantizing them, and then uploading them to a Hugging Face-compatible repository.
+   - The two supported quantization methods are Exllama2 and AutoAWQ.
+   - The app is designed for simplicity: clone the repository, install the dependencies, and run the app with Python or Bash.
+   - The app attempts to support both Nvidia CUDA and AMD ROCm GPUs, but may require adjustments based on the specific hardware and drivers available.
+   - This app is intended to run on linux servers only.
+
+2. **Project Identity**:
+   - The app is developed with a focus on ease of use and accessibility for users who want to quickly and efficiently quantize models.
+
+3. **Development Practices**:
+   - Ensure that the quantization process is efficient and error-free. The app should handle edge cases, such as incompatible models or quantization failures, with clear error messages and suggestions for resolution.
+   - Maintain up-to-date documentation within the repository, including a clear README.md and any necessary instructions or examples.
+
+4. **AI Agent Alignment**:
+   - Ensure that all development and enhancements align with the goal of maintaining simplicity and ease of use.
+   - Regularly review and update the pipeline to support the latest models and quantization methods from Hugging Face.
+   - During any discussions or code changes, prioritize maintaining the user-friendly nature of the app.
+
+5. **Feedback and Improvements**:
+   - The AI agent should actively seek feedback on the app's functionality and user experience, suggesting improvements that could make the app even more straightforward or efficient.
+   - Document any suggested enhancements or bug fixes and ensure they are implemented in a way that preserves the app's simplicity and usability.
