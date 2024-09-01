@@ -67,6 +67,7 @@ The tool is designed to be idempotent. If you run the command multiple times:
 
 ## Environment Variables
 
+- `APP_HOME`: The absolute path for the application.
 - `HF_ACCESS_TOKEN`: Your Hugging Face access token.
 - `QUANTER`: Default quanter name to use if not provided via CLI argument.
 

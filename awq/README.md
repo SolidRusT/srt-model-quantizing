@@ -49,14 +49,6 @@ python app/main.py --author mistralai --model Mistral-7B-Instruct-v0.3 --quanter
 
 For more detailed usage instructions, please refer to the [USAGE.md](USAGE.md) file.
 
-## Contributing
-
-Contributions are welcome! Please see our [CONTRIBUTING.md](CONTRIBUTING.md) file for details on how to contribute to this project.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
 ## Docker Usage
 
 To use the Docker container:
@@ -76,3 +68,11 @@ To use the Docker container:
    ```
 
    Replace `your_token_here` with your Hugging Face token and `your_quanter_name` with your desired quanter name.
+
+## Contributing
+
+Contributions are welcome! Please see our [CONTRIBUTING.md](CONTRIBUTING.md) file for details on how to contribute to this project.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
