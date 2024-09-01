@@ -33,6 +33,15 @@ def download_model(author: str, model: str) -> str:
 
     return local_path
 
+# Add support for new models here
+new_models = [
+    {"author": "new_author_1", "model": "new_model_1"},
+    {"author": "new_author_2", "model": "new_model_2"},
+]
+
+for model in new_models:
+    download_model(model["author"], model["model"])
+
 
 def check_pytorch_files(model_path: str) -> bool:
     """

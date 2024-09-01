@@ -3,12 +3,11 @@
 ## Start a new cycle
 
 ```plaintext
-Let's begin the next development cycle for our quantization pipeline app. Review the current state of the project and cross-reference it with any existing documentation or pending tasks. Identify any new models, features, or updates from Hugging Face that should be supported, and check if our quantization methods (Exllama2 and AutoAWQ) are still up-to-date. Propose a prioritized list of actions or improvements for this cycle, ensuring that all changes maintain the app's simplicity and user-friendly nature. If there are any updates needed in the documentation or README.md file, highlight those as well.
+My @Codebase is updated. Let's begin the next development cycle for our quantization pipeline app. Start by reviewing the repository structure, identifying any dead or duplicate code, and addressing incomplete sections. Check for any missing or outdated documentation, ensuring that the README.md and other instructional materials are up-to-date. Use our ROADMAP.md file to track progress, priorities, and any adjustments needed across this cycle. Propose a prioritized list of actions to enhance the quality and maintainability of the codebase, while ensuring that all changes are reflected in the alignment file.
 ```
 
 ## Let's Proceed
 
 ```plaintext
-Based on our discussion so far, immediately start executing the first step in the plan we've outlined. Focus on implementing the changes while maintaining the app's simplicity and user-friendly design. Provide updates as you complete each step, ensuring that the process aligns with our objectives. Only stop to discuss if you encounter an issue that requires clarification or decision-making. Let's make tangible progress towards enhancing the app's functionality and usability.
-
+My @Codebase is updated. Based on our discussion so far, immediately start executing the first step in the plan we've outlined. Focus on implementing the changes, such as refining the repository structure, cleaning up dead or duplicate code, and improving documentation. As you proceed, update our development-alignment.md file to reflect progress and ensure everything stays on track. Provide updates as you complete each step, ensuring alignment with our priorities. Only stop to discuss if you encounter an issue that requires clarification or decision-making.
 ```

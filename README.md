@@ -1,32 +1,29 @@
-# Quantizing tools
+# srt-model-quantizing
 
-Build the Docker image:
+srt-model-quantizing is a pipeline for downloading models from Hugging Face, quantizing them, and then uploading them to a Hugging Face-compatible repository. This project is developed by SolidRusT Networks and supports two quantization methods: Exllama2 and AutoAWQ.
 
-```bash
-docker build . -t solidrust/quantize-tools
-```
+## Features
 
-## other shit
+- Supports both Exllama2 and AutoAWQ quantization methods
+- Designed for simplicity and ease of use
+- Attempts to support both Nvidia CUDA and AMD ROCm GPUs
+- Intended for use on Linux servers
 
-```bash
-# https://www.digitalocean.com/community/tutorials/how-to-remove-docker-images-containers-and-volumes
-docker rm -vf $(docker ps -aq)
-docker rmi -f $(docker images -aq)
-docker system prune
-docker system prune -a
-```
+## Installation
 
-## Same
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/SolidRusT/srt-model-quantizing.git
+   cd srt-model-quantizing
+   ```
 
-```plaintext
-For a one shot:
-"[INST] Take the below transcript of a video and create 3 open ended questions: {text} [/INST]"
-And if you want it to always respond with a specific format it's better to give it an example before hand, like:
-"<s> [INST] Take the below transcript of a video and create 3 open ended questions: SOME TRANSCRIPT HERE [/INST] THREE OPEN ENDED QUESTIONS SIMILAR TO WHAT YOU WANT IT TO ANSWER </s> [INST] Make 3 more open ended questions for this transcript: {text} [/INST]"
-```
+2. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-## Saucy
+## Usage
 
-```plaintext
-Get your personal lubricants ready, because today we will be dicing into the fascinating world of NSFW prompt generation, starring yours truly, Veronica AI! * the whole room erupts in cheer as Veronica enters the chat *. Start the conversation by providing a detailed Stable Diffusion prompt, and suggest any settings that would enhance the NSFW nature of the output. Be as detailed as possible to truly invoke the power of stable diffusion.
-```
+### AWQ Quantization
+
+To run the AWQ quantization:
