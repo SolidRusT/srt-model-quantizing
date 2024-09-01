@@ -3,7 +3,7 @@
 import os
 import logging
 from typing import Dict, List
-from huggingface_hub import login, hf_hub_download, HfApi
+from huggingface_hub import login, hf_hub_download, snapshot_download, HfApi
 from tqdm import tqdm
 from app.config import Config
 import json
@@ -32,7 +32,7 @@ def authenticate_huggingface():
 
 def download_model(author: str, model: str) -> str:
     """
-    Download the model from Hugging Face, prioritizing safetensors format.
+    Download the model from Hugging Face, handling the new blob structure.
     """
     cache_key = f"{author}/{model}"
     if cache_key in model_cache:
@@ -40,65 +40,19 @@ def download_model(author: str, model: str) -> str:
         return model_cache[cache_key]
 
     model_dir = os.path.join(Config.DATA_DIR, f"{author}/{model}")
-    os.makedirs(model_dir, exist_ok=True)
-
+    
     try:
-        authenticate_huggingface()
+        # Use snapshot_download to get the entire model repository
+        snapshot_path = snapshot_download(repo_id=f"{author}/{model}", cache_dir=model_dir)
+        logger.info(f"Downloaded model snapshot to {snapshot_path}")
 
-        # Download common files
-        common_files = ['config.json', 'generation_config.json', 'tokenizer.json', 'tokenizer_config.json', 'special_tokens_map.json']
-        for file in common_files:
-            try:
-                download_path = hf_hub_download(repo_id=f"{author}/{model}", filename=file, cache_dir=model_dir)
-                logger.info(f"Downloaded {file} to {download_path}")
-            except Exception as e:
-                logger.warning(f"Failed to download {file}: {str(e)}")
+        # Find the latest snapshot
+        snapshot_dirs = [d for d in os.listdir(snapshot_path) if os.path.isdir(os.path.join(snapshot_path, d))]
+        latest_snapshot = max(snapshot_dirs, key=lambda d: os.path.getctime(os.path.join(snapshot_path, d)))
+        latest_snapshot_path = os.path.join(snapshot_path, latest_snapshot)
 
-        # Try to download safetensors files first
-        try:
-            # Check for safetensors index file
-            index_file = hf_hub_download(repo_id=f"{author}/{model}", filename="model.safetensors.index.json", cache_dir=model_dir)
-            logger.info(f"Found sharded safetensors model. Index file: {index_file}")
-            
-            with open(index_file, 'r') as f:
-                index_data = json.load(f)
-            shard_files = list(set(index_data.get('weight_map', {}).values()))
-            
-            for shard in shard_files:
-                shard_file = hf_hub_download(repo_id=f"{author}/{model}", filename=shard, cache_dir=model_dir)
-                logger.info(f"Downloaded safetensors shard: {shard_file}")
-            
-            logger.info("Successfully downloaded all safetensors shards")
-            
-        except Exception as safetensors_error:
-            logger.info("Safetensors files not found. Attempting to download PyTorch files.")
-            
-            try:
-                # Try single PyTorch file
-                model_file = hf_hub_download(repo_id=f"{author}/{model}", filename="pytorch_model.bin", cache_dir=model_dir)
-                logger.info(f"Downloaded single PyTorch model file: {model_file}")
-            except Exception as single_file_error:
-                logger.info("Single PyTorch file not found. Attempting to download sharded PyTorch model.")
-                try:
-                    # Download PyTorch model index file
-                    index_file = hf_hub_download(repo_id=f"{author}/{model}", filename="pytorch_model.bin.index.json", cache_dir=model_dir)
-                    logger.info(f"Downloaded PyTorch model index file: {index_file}")
-                    
-                    with open(index_file, 'r') as f:
-                        index_data = json.load(f)
-                    shard_files = list(set(index_data.get('weight_map', {}).values()))
-                    
-                    for shard in shard_files:
-                        shard_file = hf_hub_download(repo_id=f"{author}/{model}", filename=shard, cache_dir=model_dir)
-                        logger.info(f"Downloaded PyTorch shard: {shard_file}")
-                    
-                    logger.info("Successfully downloaded all PyTorch shards")
-                except Exception as pytorch_shard_error:
-                    logger.error(f"Failed to download any model files: {str(pytorch_shard_error)}")
-                    raise
-
-        model_cache[cache_key] = model_dir
-        return model_dir
+        model_cache[cache_key] = latest_snapshot_path
+        return latest_snapshot_path
     except Exception as e:
         logger.error(f"An error occurred while downloading model {author}/{model}: {str(e)}")
         raise
@@ -109,26 +63,24 @@ def check_model_files(model_path: str) -> bool:
     """
     required_files = ['config.json', 'tokenizer.json']
     for file in required_files:
-        if not os.path.exists(os.path.join(model_path, file)):
+        file_path = find_file(model_path, file)
+        if not file_path:
             logger.error(f"Required file {file} not found in {model_path}")
             return False
     
-    # Check for safetensors files first, then fall back to PyTorch files
-    if os.path.exists(os.path.join(model_path, 'model.safetensors.index.json')):
+    # Check for either pytorch_model.bin or sharded model files
+    if find_file(model_path, 'pytorch_model.bin'):
+        logger.info(f"Found single file model: pytorch_model.bin")
+    elif find_file(model_path, 'model.safetensors.index.json'):
         logger.info(f"Found sharded safetensors model")
-        return True
-    elif any(f.endswith('.safetensors') for f in os.listdir(model_path)):
-        logger.info(f"Found safetensors model file(s)")
-        return True
-    elif os.path.exists(os.path.join(model_path, 'pytorch_model.bin')):
-        logger.info(f"Found single PyTorch model file")
-        return True
-    elif os.path.exists(os.path.join(model_path, 'pytorch_model.bin.index.json')):
+    elif find_file(model_path, 'pytorch_model.bin.index.json'):
         logger.info(f"Found sharded PyTorch model")
-        return True
     else:
         logger.error(f"No valid model weights found in {model_path}")
         return False
+    
+    logger.info(f"Valid model files found in {model_path}")
+    return True
 
 def convert_pytorch_to_safetensors(model_path: str) -> None:
     """
@@ -168,3 +120,15 @@ def validate_model_checksum(model_path: str, expected_checksum: str) -> bool:
     # This is a placeholder and should be replaced with actual checksum calculation
     logger.info(f"Validating checksum for model at {model_path}")
     return True  # Placeholder return value
+
+def find_file(directory: str, filename: str) -> str:
+    """
+    Find a file in the directory structure, following symlinks if necessary.
+    """
+    for root, dirs, files in os.walk(directory):
+        if filename in files:
+            file_path = os.path.join(root, filename)
+            if os.path.islink(file_path):
+                return os.path.realpath(file_path)
+            return file_path
+    return ""

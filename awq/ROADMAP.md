@@ -6,15 +6,19 @@
 - [x] Update quantization.py to handle split safetensors files
 - [x] Fix template processing error in main.py and template_parser.py
 - [x] Implement proper path handling for template files
-- [ ] Enhance error handling and logging for new file formats
+- [x] Enhance error handling and logging for new file formats
+- [x] Update download_model function to handle Hugging Face Hub's blob structure
+- [ ] Test and verify the updated model download and file checking process
+- [ ] Clean up repository structure and remove outdated files
+- [ ] Implement support for additional quantization methods
 
 ## Backlog
-- [ ] Test and verify PyTorch model download and conversion
-- [ ] Implement support for additional quantization methods
 - [ ] Create a command-line interface for easier use
 - [ ] Improve documentation with examples and use cases
 - [ ] Implement progress tracking for long-running operations
 - [ ] Add support for model checksum validation
+- [ ] Implement parallel processing for large models
+- [ ] Integrate template files (processing-notice.txt, initial-readme.txt) into the main application
 
 ## Completed
 - [x] Refactor quantization.py to improve error handling and logging
@@ -27,3 +31,5 @@
 - [x] Implement safetensors model download in model_utils.py
 - [x] Fix template processing error in main.py and template_parser.py
 - [x] Implement proper path handling for template files
+- [x] Enhance error handling and logging for new file formats
+- [x] Update download_model function to handle Hugging Face Hub's blob structure
