@@ -1,5 +1,5 @@
 __pycache__/
 data/
 logs/
-repos/
-DEV.md
+CURSOR.md
+.env
