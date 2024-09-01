@@ -1,8 +1,9 @@
 # app/converter.py
 
 import os
-import logging
+import glob
 import torch
+import logging
 from safetensors.torch import save_file, load_file
 from typing import Dict, Any
 
@@ -21,19 +22,17 @@ def convert_model_to_safetensors(model_path: str) -> str:
     """
     logger.info(f"Checking model files in {model_path}")
     
-    pytorch_files = [f for f in os.listdir(model_path) if f.endswith('.bin') or f.endswith('.pt')]
-    safetensors_files = [f for f in os.listdir(model_path) if f.endswith('.safetensors')]
-
-    if not pytorch_files and not safetensors_files:
-        raise ValueError(f"No valid model files found in {model_path}")
-
-    if pytorch_files:
-        logger.info("Found PyTorch model files. Converting to safetensors format.")
-        for file in pytorch_files:
-            convert_file(os.path.join(model_path, file))
-    else:
-        logger.info("Model is already in safetensors format. No conversion needed.")
-
+    pytorch_files = glob.glob(os.path.join(model_path, '*.bin')) + glob.glob(os.path.join(model_path, '*.pt'))
+    
+    for file in pytorch_files:
+        pytorch_path = file
+        safetensors_path = os.path.splitext(pytorch_path)[0] + '.safetensors'
+        
+        state_dict = torch.load(pytorch_path, map_location='cpu')
+        save_file(state_dict, safetensors_path)
+        
+        os.remove(pytorch_path)
+    
     return model_path
 
 def convert_file(file_path: str) -> None:

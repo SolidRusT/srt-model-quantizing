@@ -18,8 +18,8 @@ The Quant-AWQ Application automates the quantization of models using the Adaptiv
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-repo/quant-awq.git
-   cd quant-awq
+   git clone https://github.com/SolidRusT/srt-model-quantization.git
+   cd awq
    ```
 
 2. Install dependencies:
@@ -76,11 +76,21 @@ Modify the settings in `app/config.py` to adjust paths, quantization parameters,
 
 ## Testing
 
-Run the unit tests to verify that all components of the application are functioning correctly:
+To run the unit tests, use the following command from the project root directory:
 
 ```bash
-python run_tests.py
+python -m unittest discover tests
 ```
+
+This command will discover and run all tests in the `tests/` directory.
+
+Alternatively, you can use the `run_tests.py` script:
+
+```bash
+python tests/run_tests.py
+```
+
+Both methods will provide detailed output about the test results.
 
 ## Contributing
 

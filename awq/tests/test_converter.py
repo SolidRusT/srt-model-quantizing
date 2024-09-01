@@ -1,13 +1,15 @@
 import unittest
 from unittest.mock import patch, mock_open, MagicMock
 import torch
+import os
 from app.converter import convert_model_to_safetensors, save_file
 
 class TestConverter(unittest.TestCase):
     @patch('app.converter.glob.glob')
     @patch('app.converter.torch.load')
     @patch('app.converter.save_file')
-    def test_convert_model_to_safetensors(self, mock_save_file, mock_torch_load, mock_glob):
+    @patch('app.converter.os.remove')
+    def test_convert_model_to_safetensors(self, mock_remove, mock_save_file, mock_torch_load, mock_glob):
         # Setup
         mock_glob.return_value = ['model.bin']
         mock_torch_load.return_value = {'weights': torch.tensor([1.0, 2.0, 3.0])}
@@ -17,6 +19,7 @@ class TestConverter(unittest.TestCase):
 
         # Assertions
         mock_save_file.assert_called_once()
+        mock_remove.assert_called_once_with('model.bin')
         self.assertEqual(result, 'dummy_directory', "The function should return the directory path")
 
     @patch('app.converter.glob.glob')
@@ -33,7 +36,8 @@ class TestConverter(unittest.TestCase):
     @patch('app.converter.glob.glob')
     @patch('app.converter.torch.load')
     @patch('app.converter.save_file')
-    def test_convert_model_to_safetensors_multiple_files(self, mock_save_file, mock_torch_load, mock_glob):
+    @patch('app.converter.os.remove')
+    def test_convert_model_to_safetensors_multiple_files(self, mock_remove, mock_save_file, mock_torch_load, mock_glob):
         # Setup
         mock_glob.return_value = ['model_part1.bin', 'model_part2.bin']
         mock_torch_load.side_effect = [
@@ -46,6 +50,7 @@ class TestConverter(unittest.TestCase):
 
         # Assertions
         self.assertEqual(mock_save_file.call_count, 2, "save_file should be called for each model part")
+        self.assertEqual(mock_remove.call_count, 2, "os.remove should be called for each original file")
         self.assertEqual(result, 'dummy_directory', "The function should return the directory path")
 
     @patch('safetensors.torch.save_file')

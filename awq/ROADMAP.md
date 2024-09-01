@@ -1,18 +1,21 @@
 # Development Roadmap
 
 ## Current Sprint
-- [ ] Expand test coverage
-  - [ ] Create tests/ directory
-  - [ ] Implement tests for all modules
-  - [ ] Update run_tests.py script
+- [x] Fix model downloading issue in model_utils.py
+- [x] Improve error handling and logging for the download process
+- [x] Expand test coverage
+- [x] Enhance error handling and logging across all modules
+- [x] Improve user feedback and progress indication
+- [x] Restore organized folder structure for output files
+- [x] Ensure complete processing of all model files
+- [ ] Implement actual quantization logic (replace placeholder)
+- [ ] Update and expand documentation
+  - [ ] Add troubleshooting section to README.md
+  - [ ] Expand NOTES.md with usage examples
+  - [ ] Add inline documentation to complex functions
 - [ ] Clean up repository structure
   - [ ] Clarify or remove repos/ directory
   - [ ] Update .gitignore and .cursorignore
-- [ ] Enhance error handling and logging across all modules
-- [ ] Update and expand documentation
-  - [ ] Revise README.md
-  - [ ] Expand NOTES.md
-  - [ ] Add inline documentation to complex functions
 - [ ] Create a command-line interface for easier use
 - [ ] Implement progress tracking for long-running operations
 

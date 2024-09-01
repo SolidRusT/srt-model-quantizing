@@ -29,32 +29,19 @@ def authenticate_huggingface():
         logger.info("Successfully authenticated with Hugging Face")
     except Exception as e:
         logger.error(f"Failed to authenticate with Hugging Face: {str(e)}")
+        raise
 
 def download_model(author: str, model: str) -> str:
     """
     Download the model from Hugging Face, handling the new blob structure.
     """
-    cache_key = f"{author}/{model}"
-    if cache_key in model_cache:
-        logger.info(f"Using cached model for {cache_key}")
-        return model_cache[cache_key]
-
-    model_dir = os.path.join(Config.DATA_DIR, f"{author}/{model}")
-    
     try:
-        # Use snapshot_download to get the entire model repository
-        snapshot_path = snapshot_download(repo_id=f"{author}/{model}", cache_dir=model_dir)
-        logger.info(f"Downloaded model snapshot to {snapshot_path}")
-
-        # Find the latest snapshot
-        snapshot_dirs = [d for d in os.listdir(snapshot_path) if os.path.isdir(os.path.join(snapshot_path, d))]
-        latest_snapshot = max(snapshot_dirs, key=lambda d: os.path.getctime(os.path.join(snapshot_path, d)))
-        latest_snapshot_path = os.path.join(snapshot_path, latest_snapshot)
-
-        model_cache[cache_key] = latest_snapshot_path
-        return latest_snapshot_path
+        logger.info(f"Attempting to download model {author}/{model}")
+        model_path = snapshot_download(repo_id=f"{author}/{model}", local_dir=os.path.join(Config.DATA_DIR, f"{author}-{model}"))
+        logger.info(f"Model downloaded successfully to {model_path}")
+        return model_path
     except Exception as e:
-        logger.error(f"An error occurred while downloading model {author}/{model}: {str(e)}")
+        logger.error(f"Error downloading model {author}/{model}: {str(e)}")
         raise
 
 def check_model_files(model_path: str) -> bool:
@@ -79,7 +66,7 @@ def check_model_files(model_path: str) -> bool:
         logger.error(f"No valid model weights found in {model_path}")
         return False
     
-    logger.info(f"Valid model files found in {model_path}")
+    logger.info(f"All required model files found in {model_path}")
     return True
 
 def convert_pytorch_to_safetensors(model_path: str) -> None:
