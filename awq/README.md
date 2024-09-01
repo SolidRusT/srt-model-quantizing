@@ -31,7 +31,7 @@ The Quant-AWQ Application automates the quantization of models using the Adaptiv
 
 ### Basic Usage
 
-Run the application with the following command:
+Run the application with the following command from the root directory of the project:
 
 ```bash
 python app/main.py --author [author] --model [model]

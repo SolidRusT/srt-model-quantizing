@@ -1,6 +1,9 @@
 # app/config.py
 
 import os
+from dotenv import load_dotenv
+
+load_dotenv()  # This loads the variables from .env file
 
 class Config:
     # Application Home Directory
@@ -28,6 +31,9 @@ class Config:
         'w_bit': 4,
         'version': 'GEMM'
     }
+
+    # Authentication Settings
+    HF_ACCESS_TOKEN = os.getenv('HF_ACCESS_TOKEN')
 
     # Ensure required directories are created
     @staticmethod

@@ -7,3 +7,5 @@ protobuf
 sentencepiece
 requests
 tqdm
+huggingface_hub>=0.16.0
+python-dotenv
