@@ -9,10 +9,16 @@ class Config:
     # Application Home Directory
     APP_HOME = os.getenv('APP_HOME', '/opt/quant-awq')
 
+    # Project root directory (parent of app directory)
+    PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+
     # Repository and Data Directory Configurations
-    MODEL_REPO_DIR = os.path.join(APP_HOME, 'repos', 'srt-model-quantizing', 'awq')
     DATA_DIR = os.path.join(APP_HOME, 'data')
     LOG_DIR = os.path.join(APP_HOME, 'logs')
+
+    # Static content files
+    PROCESSING_NOTICE_PATH = os.path.join(PROJECT_ROOT, 'processing-notice.txt')
+    INITIAL_README_PATH = os.path.join(PROJECT_ROOT, 'initial-readme.txt')
 
     # Quantization Process Configuration
     QUANTER = 'solidrust'
@@ -38,7 +44,6 @@ class Config:
     # Ensure required directories are created
     @staticmethod
     def setup_directories():
-        os.makedirs(Config.MODEL_REPO_DIR, exist_ok=True)
         os.makedirs(Config.DATA_DIR, exist_ok=True)
         os.makedirs(Config.LOG_DIR, exist_ok=True)
 

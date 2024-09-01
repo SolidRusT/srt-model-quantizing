@@ -31,9 +31,9 @@ def main(author: str, model: str):
             return
 
         # Process initial processing notice template
-        processing_notice_path = os.path.join(Config.MODEL_REPO_DIR, 'processing-notice.txt')
-        readme_path = os.path.join(Config.DATA_DIR, model + '-AWQ', 'README.md')
-        process_template(processing_notice_path, readme_path, author, model)
+        readme_path = os.path.join(Config.DATA_DIR, f"{author}-{model}-AWQ", 'README.md')
+        os.makedirs(os.path.dirname(readme_path), exist_ok=True)
+        process_template(Config.PROCESSING_NOTICE_PATH, readme_path, author, model)
         logger.info("Initial processing notice added")
 
         # Check if the model files are valid PyTorch files
@@ -45,8 +45,7 @@ def main(author: str, model: str):
             run_quantization(converted_path, Config.QUANT_CONFIG)
 
             # Process the final README template
-            final_readme_path = os.path.join(Config.MODEL_REPO_DIR, 'initial-readme.txt')
-            process_template(final_readme_path, readme_path, author, model)
+            process_template(Config.INITIAL_README_PATH, readme_path, author, model)
             logger.info("Model quantization and README update completed successfully")
         else:
             logger.error("Invalid PyTorch files. Quantization process aborted.")

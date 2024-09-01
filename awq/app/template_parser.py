@@ -1,48 +1,39 @@
 import os
-from app.config import Config
 import logging
 
-def read_template(template_path):
+logger = logging.getLogger(__name__)
+
+def read_template(template_path: str) -> str:
     """
-    Reads a template file from the specified path.
-
-    Args:
-        template_path (str): Path to the template file.
-
-    Returns:
-        str: Content of the template file.
+    Read the content of a template file.
     """
-    with open(template_path, 'r', encoding='utf-8') as file:
-        return file.read()
+    try:
+        with open(template_path, 'r', encoding='utf-8') as file:
+            return file.read()
+    except FileNotFoundError:
+        logger.error(f"Template file not found: {template_path}")
+        raise
+    except IOError as e:
+        logger.error(f"Error reading template file {template_path}: {str(e)}")
+        raise
 
-def write_content_to_file(content, file_path):
+def process_template(template_path: str, output_path: str, author: str, model: str) -> None:
     """
-    Writes content to a file at the specified path.
-
-    Args:
-        content (str): Content to write to the file.
-        file_path (str): Path to the file where content should be written.
-    """
-    os.makedirs(os.path.dirname(file_path), exist_ok=True)
-    with open(file_path, 'w', encoding='utf-8') as file:
-        file.write(content)
-    logging.info(f"Content written to {file_path}")
-
-def process_template(author, model, template_path, output_path):
-    """
-    Processes a template file by replacing placeholders with specific values and writes to the output path.
-
-    Args:
-        author (str): Author name to replace in the template.
-        model (str): Model name to replace in the template.
-        template_path (str): Path to the template file.
-        output_split_path (str): Path to save the processed template.
+    Process a template file and write the result to the output file.
     """
     try:
         content = read_template(template_path)
-        content = content.format(AUTHOR=author, MODEL=model)
-        write_content_to_file(content, output_path)
-        logging.info(f"Template processed and saved to {output_path}")
+        
+        # Replace placeholders
+        content = content.replace('{AUTHOR}', author)
+        content = content.replace('{MODEL}', model)
+        
+        # Write processed content to output file
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+        with open(output_path, 'w', encoding='utf-8') as file:
+            file.write(content)
+        
+        logger.info(f"Template processed and written to {output_path}")
     except Exception as e:
-        logging.error(f"Failed to process template {template_path}: {e}")
+        logger.error(f"Error processing template {template_path}: {str(e)}")
         raise
