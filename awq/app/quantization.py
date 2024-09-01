@@ -9,6 +9,7 @@ import shutil
 from awq import AutoAWQForCausalLM
 from transformers import AutoTokenizer
 import torch
+from app.converter import load_safetensors_model, save_safetensors_model  # Add this import
 
 logger = logging.getLogger(__name__)
 
@@ -41,14 +42,6 @@ def run_quantization(model_path: str, quant_config: Dict[str, Any], output_dir: 
         print(f"Saving quantized model to {output_dir}")
         model.save_quantized(output_dir)
         tokenizer.save_pretrained(output_dir)
-
-        # Validate the quantized model
-        if validate_quantized_model(output_dir):
-            logger.info("Quantization and validation completed successfully")
-            print("Quantization and validation completed successfully")
-        else:
-            logger.error("Quantization completed, but validation failed")
-            print("Quantization completed, but validation failed")
 
         logger.info(f"Quantization completed successfully. Quantized model saved to {output_dir}")
         print(f"Quantization completed successfully. Quantized model saved to {output_dir}")

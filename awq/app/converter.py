@@ -4,7 +4,7 @@ import os
 import glob
 import torch
 import logging
-from safetensors.torch import save_file, load_file
+from safetensors.torch import save_file as safetensors_save_file
 from typing import Dict, Any
 
 logger = logging.getLogger(__name__)
@@ -28,10 +28,12 @@ def convert_model_to_safetensors(model_path: str) -> str:
         pytorch_path = file
         safetensors_path = os.path.splitext(pytorch_path)[0] + '.safetensors'
         
-        state_dict = torch.load(pytorch_path, map_location='cpu')
-        save_file(state_dict, safetensors_path)
-        
-        os.remove(pytorch_path)
+        if not os.path.exists(safetensors_path):
+            state_dict = torch.load(pytorch_path, map_location='cpu')
+            safetensors_save_file(state_dict, safetensors_path)
+            os.remove(pytorch_path)
+        else:
+            logger.info(f"Safetensors file already exists for {pytorch_path}. Skipping conversion.")
     
     return model_path
 
@@ -118,3 +120,13 @@ def save_safetensors_model(state_dict: Dict[str, Any], output_path: str, max_sha
             logger.info(f"Saved final shard {shard_index} to {shard_path}")
 
         logger.info(f"Model split into {shard_index + 1} shards")
+
+def save_file(tensors: Dict[str, torch.Tensor], filename: str) -> None:
+    """
+    Save tensors to a file using safetensors format.
+
+    Args:
+        tensors (Dict[str, torch.Tensor]): Tensors to save.
+        filename (str): Name of the file to save to.
+    """
+    safetensors_save_file(tensors, filename)

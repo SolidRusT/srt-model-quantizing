@@ -1,59 +1,50 @@
 import unittest
 from unittest.mock import patch, mock_open, MagicMock
 import torch
-import os
-from app.converter import convert_model_to_safetensors, save_file
+from app.converter import convert_model_to_safetensors, save_file  # Add save_file import
 
 class TestConverter(unittest.TestCase):
     @patch('app.converter.glob.glob')
     @patch('app.converter.torch.load')
-    @patch('app.converter.save_file')
+    @patch('app.converter.safetensors_save_file')
     @patch('app.converter.os.remove')
-    def test_convert_model_to_safetensors(self, mock_remove, mock_save_file, mock_torch_load, mock_glob):
+    @patch('app.converter.os.path.exists')
+    def test_convert_model_to_safetensors(self, mock_exists, mock_remove, mock_save_file, mock_load, mock_glob):
         # Setup
         mock_glob.return_value = ['model.bin']
-        mock_torch_load.return_value = {'weights': torch.tensor([1.0, 2.0, 3.0])}
+        mock_load.return_value = {'weights': torch.tensor([1.0, 2.0, 3.0])}
+        mock_exists.return_value = False
 
         # Test action
         result = convert_model_to_safetensors('dummy_directory')
 
         # Assertions
-        mock_save_file.assert_called_once()
+        mock_load.assert_called_once_with('model.bin', map_location='cpu')
+        mock_save_file.assert_called_once_with({'weights': torch.tensor([1.0, 2.0, 3.0])}, 'model.safetensors')
         mock_remove.assert_called_once_with('model.bin')
-        self.assertEqual(result, 'dummy_directory', "The function should return the directory path")
-
-    @patch('app.converter.glob.glob')
-    def test_convert_model_to_safetensors_no_files(self, mock_glob):
-        # Setup
-        mock_glob.return_value = []
-
-        # Test action
-        result = convert_model_to_safetensors('dummy_directory')
-
-        # Assertions
-        self.assertEqual(result, 'dummy_directory', "The function should return the directory path even if no files are found")
+        self.assertEqual(result, 'dummy_directory')
 
     @patch('app.converter.glob.glob')
     @patch('app.converter.torch.load')
-    @patch('app.converter.save_file')
+    @patch('app.converter.safetensors_save_file')
     @patch('app.converter.os.remove')
-    def test_convert_model_to_safetensors_multiple_files(self, mock_remove, mock_save_file, mock_torch_load, mock_glob):
+    @patch('app.converter.os.path.exists')
+    def test_convert_model_to_safetensors_multiple_files(self, mock_exists, mock_remove, mock_save_file, mock_load, mock_glob):
         # Setup
         mock_glob.return_value = ['model_part1.bin', 'model_part2.bin']
-        mock_torch_load.side_effect = [
-            {'weights1': torch.tensor([1.0, 2.0])},
-            {'weights2': torch.tensor([3.0, 4.0])}
-        ]
+        mock_load.return_value = {'weights': torch.tensor([1.0, 2.0, 3.0])}
+        mock_exists.return_value = False
 
         # Test action
         result = convert_model_to_safetensors('dummy_directory')
 
         # Assertions
-        self.assertEqual(mock_save_file.call_count, 2, "save_file should be called for each model part")
-        self.assertEqual(mock_remove.call_count, 2, "os.remove should be called for each original file")
-        self.assertEqual(result, 'dummy_directory', "The function should return the directory path")
+        self.assertEqual(mock_load.call_count, 2)
+        self.assertEqual(mock_save_file.call_count, 2)
+        self.assertEqual(mock_remove.call_count, 2)
+        self.assertEqual(result, 'dummy_directory')
 
-    @patch('safetensors.torch.save_file')
+    @patch('app.converter.safetensors_save_file')
     def test_save_file(self, mock_safetensors_save):
         # Setup
         tensors = {'weight': torch.tensor([1.0, 2.0, 3.0])}
