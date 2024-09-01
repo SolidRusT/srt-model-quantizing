@@ -5,12 +5,18 @@
 - [x] Update requirements.txt with necessary dependencies
 - [x] Test the updated quantization process with various models
 - [x] Implement model validation after quantization
-- [ ] Add option to specify output bit-width (2-bit, 3-bit, 4-bit, 8-bit)
-- [ ] Update documentation with new quantization details and usage instructions
+- [x] Implement HuggingFace repo creation for AWQ models
+- [x] Implement downloading of existing AWQ repo to data folder
+- [x] Update README creation and upload process
+- [x] Refactor main.py to follow the new workflow
+- [x] Implement idempotent logic for existing AWQ models
+- [x] Add error handling for various scenarios in the new workflow
+- [ ] Update documentation with new workflow details
 - [ ] Implement progress tracking for long-running operations
-- [ ] Add error handling for out-of-memory situations
+- [ ] Add option to specify output bit-width (2-bit, 3-bit, 4-bit, 8-bit)
 
 ## Backlog
+- [ ] Add error handling for out-of-memory situations
 - [ ] Optimize model loading process for large models
 - [ ] Move configuration to YAML or JSON file
 - [ ] Implement support for additional quantization methods
@@ -28,3 +34,6 @@
 - [x] Improve user feedback and progress indication
 - [x] Restore organized folder structure for output files
 - [x] Ensure complete processing of all model files
+- [x] Implement basic quantization workflow
+- [x] Create and update README.md for AWQ models
+- [x] Implement automatic determination of quanter when not provided

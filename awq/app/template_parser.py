@@ -30,15 +30,29 @@ def write_content_to_file(content: str, output_path: str) -> None:
         logger.error(f"Error writing to file {output_path}: {str(e)}")
         raise
 
-def process_template(template_path: str, output_path: str, author: str, model: str) -> None:
+def process_template(template_path: str, output_path: str, **kwargs):
     """
     Process a template file and write the result to an output file.
+
+    Args:
+        template_path (str): Path to the template file.
+        output_path (str): Path where the processed file will be written.
+        **kwargs: Keyword arguments to be replaced in the template.
     """
     try:
-        logger.info(f"Processing template: {template_path} for author: {author}, model: {model}")
-        template_content = read_template(template_path)
-        processed_content = template_content.replace("{AUTHOR}", author).replace("{MODEL}", model)
-        write_content_to_file(processed_content, output_path)
+        logger.info(f"Processing template: {template_path}")
+        with open(template_path, 'r', encoding='utf-8') as file:
+            template_content = file.read()
+
+        # Replace placeholders in the template
+        for key, value in kwargs.items():
+            placeholder = f"{{{key.upper()}}}"
+            template_content = template_content.replace(placeholder, str(value))
+
+        # Write the processed content to the output file
+        with open(output_path, 'w', encoding='utf-8') as file:
+            file.write(template_content)
+
         logger.info(f"Template processed successfully: {template_path} -> {output_path}")
     except Exception as e:
         logger.error(f"Error processing template: {str(e)}")

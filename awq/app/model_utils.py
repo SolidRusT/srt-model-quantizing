@@ -19,17 +19,13 @@ def authenticate_huggingface():
     """
     Authenticate with Hugging Face using the access token from environment variables.
     """
-    access_token = os.getenv('HF_ACCESS_TOKEN')
-    if not access_token:
-        logger.warning("HF_ACCESS_TOKEN not found in environment variables. Some models may not be accessible.")
-        return
-
-    try:
-        login(access_token)
-        logger.info("Successfully authenticated with Hugging Face")
-    except Exception as e:
-        logger.error(f"Failed to authenticate with Hugging Face: {str(e)}")
-        raise
+    token = os.environ.get("HF_ACCESS_TOKEN") or HfFolder.get_token()
+    if token:
+        login(token)
+        return token
+    else:
+        logger.error("HF_ACCESS_TOKEN not found in environment variables or Hugging Face cache.")
+        return None
 
 def download_model(author: str, model: str) -> str:
     """
