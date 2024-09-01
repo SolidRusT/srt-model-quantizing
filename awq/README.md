@@ -15,7 +15,7 @@ SRT Model Quantizing is a tool for downloading models from Hugging Face, quantiz
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/your-repo/srt-model-quantizing.git
+   git clone https://github.com/solidrust/srt-model-quantizing.git
    cd srt-model-quantizing
    ```
 
@@ -39,7 +39,7 @@ python app/main.py --author <author> --model <model> [--quanter <quanter>]
 
 - `<author>`: The author of the original model on Hugging Face
 - `<model>`: The name of the original model on Hugging Face
-- `<quanter>` (optional): The user or organization to publish the AWQ model under. If not provided, it will be automatically determined from your Hugging Face account.
+- `<quanter>` (optional): The user or organization to publish the AWQ model under. If not provided, it will be automatically determined from your Hugging Face access token.
 
 Example:
 

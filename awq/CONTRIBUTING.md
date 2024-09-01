@@ -7,7 +7,7 @@ We welcome contributions to the SRT Model Quantizing project! This document prov
 1. Fork the repository on GitHub.
 2. Clone your fork locally:
    ```bash
-   git clone https://github.com/your-username/srt-model-quantizing.git
+   git clone https://github.com/solidrust/srt-model-quantizing.git
    cd srt-model-quantizing
    ```
 3. Create a new branch for your feature or bug fix:
@@ -25,7 +25,6 @@ We welcome contributions to the SRT Model Quantizing project! This document prov
 2. Install the development dependencies:
    ```bash
    pip install -r requirements.txt
-   pip install -r requirements-dev.txt  # If exists
    ```
 
 ## Making Changes
