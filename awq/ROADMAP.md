@@ -14,10 +14,10 @@
 - [x] Update documentation with new workflow details
 - [x] Reorganize static content templates into a dedicated directory
 - [x] Create Dockerfile for easy setup and deployment
-- [ ] Implement progress tracking for long-running operations
-- [ ] Add option to specify output bit-width (2-bit, 3-bit, 4-bit, 8-bit)
 
 ## Backlog
+- [ ] Add option to specify output version (GEMM, GEMV)
+- [ ] Add option to specify output group size (128, 64, 32, etc.)
 - [ ] Add error handling for out-of-memory situations
 - [ ] Optimize model loading process for large models
 - [ ] Move configuration to YAML or JSON file
