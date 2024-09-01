@@ -46,6 +46,23 @@ python app/main.py --author [author] --model [model]
 
 Replace `[author]` and `[model]` with the actual author and model name you wish to quantize.
 
+## Detailed Usage
+
+1. Prepare your model:
+   Ensure your model is in a supported format (PyTorch .bin or .pt files).
+
+2. Set up configuration:
+   Modify the `app/config.py` file to set your desired quantization parameters.
+
+3. Run the quantization:
+   ```bash
+   python app/main.py --author [author_name] --model [model_name]
+   ```
+   Replace `[author_name]` and `[model_name]` with the appropriate values.
+
+4. Check the output:
+   The quantized model will be saved in the `data/` directory with the suffix "-AWQ".
+
 ## Configuration
 
 Modify the settings in `app/config.py` to adjust paths, quantization parameters, and other operational settings as needed.

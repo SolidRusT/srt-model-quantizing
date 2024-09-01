@@ -8,29 +8,30 @@ from app.config import Config
 # Setup logging
 logger = logging.getLogger(__name__)
 
-def setup_environment(author: str, model: str):
-    """
-    Set up the environment specific to the author and model.
-    """
-    base_path = os.path.join(Config.DATA_DIR, f"{author}/{model}-AWQ")
-    os.makedirs(base_path, exist_ok=True)
-    logger.info(f"Environment set up at: {base_path}")
-
+# Add a simple cache for downloaded models
+model_cache = {}
 
 def download_model(author: str, model: str) -> str:
     """
     Download the model from a repository, and return the local path.
+    Uses a simple cache to avoid re-downloading.
     """
+    cache_key = f"{author}/{model}"
+    if cache_key in model_cache:
+        logger.info(f"Using cached model for {cache_key}")
+        return model_cache[cache_key]
+
     model_url = f"https://huggingface.co/{author}/{model}/resolve/main/model.pth"
     local_path = os.path.join(Config.DATA_DIR, f"{author}/{model}-AWQ", "model.pth")
 
     if not os.path.exists(local_path):
         logger.info(f"Downloading model from {model_url} to {local_path}")
-        # Using curl for demonstration purposes
+        os.makedirs(os.path.dirname(local_path), exist_ok=True)
         subprocess.run(["curl", "-L", model_url, "-o", local_path], check=True)
     else:
         logger.info(f"Model already exists locally at {local_path}")
 
+    model_cache[cache_key] = local_path
     return local_path
 
 # Add support for new models here

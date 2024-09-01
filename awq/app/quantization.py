@@ -20,29 +20,26 @@ def run_quantization(model_path: str, quant_config: dict, logger: logging.Logger
     try:
         # Construct the quantization command using quantization parameters
         quantization_command = [
-            "python", "scripts/quantize_model.py",
-            "--input", model_path,
-            "--output", quant_config.get("output_path", "quantized_model"),
-            "--bit_width", str(quant_config.get("bit_width", 4)),
-            "--fuse_layers", str(quant_config.get("fuse_layers", True))
+            "python", Config.QUANT_SCRIPT,
+            "--model_path", model_path,
+            "--quant_path", os.path.join(Config.DATA_DIR, f"{os.path.basename(model_path)}-AWQ"),
+            "--zero_point", str(quant_config.get("zero_point", True)),
+            "--q_group_size", str(quant_config.get("q_group_size", 128)),
+            "--w_bit", str(quant_config.get("w_bit", 4)),
+            "--version", quant_config.get("version", "GEMM")
         ]
-
-        # Add optional parameters based on quant_config
-        if "other_option" in quant_config:
-            quantization_command.extend(["--other_option", str(quant_config["other_option"])])
 
         # Log the constructed command
         logger.info(f"Running quantization command: {' '.join(quantization_command)}")
 
         # Execute the command and capture output
-        result = subprocess.run(quantization_command, capture_output=True, text=True)
-
-        # Check if the process ran successfully
-        if result.returncode != 0:
-            logger.error(f"Quantization failed: {result.stderr}")
-            raise RuntimeError(f"Quantization command failed with code {result.returncode}")
+        result = subprocess.run(quantization_command, capture_output=True, text=True, check=True)
 
         logger.info("Model quantization completed successfully.")
+        logger.debug(f"Quantization output: {result.stdout}")
+    except subprocess.CalledProcessError as e:
+        logger.error(f"Quantization failed: {e.stderr}")
+        raise RuntimeError(f"Quantization command failed with code {e.returncode}")
     except Exception as e:
         logger.exception(f"Exception during quantization: {str(e)}")
         raise RuntimeError(f"Failed to run quantization: {str(e)}")
