@@ -32,5 +32,8 @@ cd ${work_dir}/repos/AutoAWQ
 pip install .
 
 # end
+pip show torch
+pip show transformers
+echo "Fuck you, we will not use old versions of torch and transformers!"
 deactivate
 cd ${work_dir}
