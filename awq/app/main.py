@@ -2,6 +2,7 @@ import os
 import sys
 import argparse
 import logging
+import re
 from huggingface_hub import HfApi, create_repo, Repository, HfFolder, whoami
 
 # Add the parent directory to the Python path
@@ -25,7 +26,15 @@ def get_default_quanter(token):
         logger.warning(f"Failed to retrieve default quanter: {str(e)}")
         return None
 
-def main(author: str, model: str, quanter: str = None):
+def parse_model_string(model_string):
+    """Parse the combined author/model string."""
+    match = re.match(r'([^/]+)/(.+)', model_string)
+    if match:
+        return match.group(1), match.group(2)
+    else:
+        raise ValueError("Invalid model format. Use 'author/model'.")
+
+def main(author: str, model: str, quanter: str = None, expected_checksum: str = None):
     try:
         logger.info(f"Starting quantization process for {author}/{model}")
         print(f"Starting quantization process for {author}/{model}")
@@ -147,9 +156,18 @@ def main(author: str, model: str, quanter: str = None):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Quantize a Hugging Face model")
-    parser.add_argument("--author", required=True, help="The author of the original model on Hugging Face")
-    parser.add_argument("--model", required=True, help="The name of the original model on Hugging Face")
+    parser.add_argument("model", nargs="?", help="The model in 'author/model' format")
+    parser.add_argument("--author", help="The author of the original model on Hugging Face")
+    parser.add_argument("--model", dest="model_name", help="The name of the original model on Hugging Face")
     parser.add_argument("--quanter", help="The user or organization to publish the AWQ model under (optional)")
+    parser.add_argument("--expected-checksum", help="The expected checksum for the model (optional)")
     args = parser.parse_args()
 
-    main(args.author, args.model, args.quanter)
+    if args.model:
+        author, model = parse_model_string(args.model)
+    elif args.author and args.model_name:
+        author, model = args.author, args.model_name
+    else:
+        parser.error("Either provide 'author/model' as a single argument or use --author and --model separately.")
+
+    main(author, model, args.quanter, args.expected_checksum)

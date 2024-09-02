@@ -18,29 +18,44 @@ This guide provides detailed instructions on how to use the SRT Model Quantizing
 
 ## Basic Usage
 
-The basic command structure is:
+You can run the quantization process using either of the following methods:
 
-```bash
-python app/main.py --author <author> --model <model> [--quanter <quanter>]
-```
+1. Combined author/model format:
+   ```bash
+   python app/main.py <author>/<model>
+   ```
 
-- `<author>`: The author of the original model on Hugging Face
-- `<model>`: The name of the original model on Hugging Face
-- `<quanter>` (optional): The user or organization to publish the AWQ model under
-
-If `--quanter` is not provided, the tool will use the username associated with your Hugging Face token.
+2. Separate author and model arguments:
+   ```bash
+   python app/main.py --author <author> --model <model>
+   ```
 
 ## Examples
 
-1. Quantize a model and publish under your personal account:
+1. Quantize a model using the combined format:
    ```bash
-   python app/main.py --author mistralai --model Mistral-7B-Instruct-v0.3
+   python app/main.py cognitivecomputations/dolphin-2.9.4-gemma2-2b
    ```
 
 2. Quantize a model and publish under a specific organization:
    ```bash
+   python app/main.py cognitivecomputations/dolphin-2.9.4-gemma2-2b --quanter solidrust
+   ```
+
+3. Using separate arguments (backward compatible):
+   ```bash
    python app/main.py --author cognitivecomputations --model dolphin-2.9.4-gemma2-2b --quanter solidrust
    ```
+
+## Additional Options
+
+- `--quanter <quanter>`: Specify the user or organization to publish the AWQ model under. If not provided, it will be automatically determined from your Hugging Face access token.
+- `--expected-checksum <checksum>`: Provide an expected checksum for the model to ensure integrity.
+
+Example with checksum:
+```bash
+python app/main.py mistralai/Mist
+```
 
 ## Process Overview
 

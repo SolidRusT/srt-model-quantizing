@@ -32,20 +32,28 @@ SRT Model Quantizing is a tool for downloading models from Hugging Face, quantiz
 
 ## Usage
 
-Basic usage:
+You can run the quantization process using either of the following methods:
 
-```bash
-python app/main.py --author <author> --model <model> [--quanter <quanter>]
-```
+1. Combined author/model format:
+   ```bash
+   python app/main.py <author>/<model> [--quanter <quanter>] [--expected-checksum <checksum>]
+   ```
 
+2. Separate author and model arguments (maintained for backward compatibility):
+   ```bash
+   python app/main.py --author <author> --model <model> [--quanter <quanter>] [--expected-checksum <checksum>]
+   ```
+
+- `<author>/<model>`: The combined author and model name as it appears on Hugging Face
 - `<author>`: The author of the original model on Hugging Face
 - `<model>`: The name of the original model on Hugging Face
 - `<quanter>` (optional): The user or organization to publish the AWQ model under. If not provided, it will be automatically determined from your Hugging Face access token.
+- `<checksum>` (optional): The expected checksum for the model.
 
-Example:
+Example using the combined format:
 
 ```bash
-python app/main.py --author mistralai --model Mistral-7B-Instruct-v0.3 --quanter solidrust
+python app/main.py mist
 ```
 
 For more detailed usage instructions, please refer to the [USAGE.md](USAGE.md) file.
