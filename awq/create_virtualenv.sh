@@ -31,6 +31,8 @@ git clone https://github.com/casper-hansen/AutoAWQ.git ${work_dir}/repos/AutoAWQ
 cd ${work_dir}/repos/AutoAWQ
 # unlock torch version
 sed -i '/requirements = \[/,/]/ s/torch==2/torch>=2/' setup.py
+# unlock transformers version
+sed -i '/requirements = \[/,/]/ s/transformers==4/transformers>=4/' setup.py
 pip install .
 
 # end
