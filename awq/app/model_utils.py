@@ -1,10 +1,11 @@
 import os
 import logging
 from typing import Dict
-from huggingface_hub import login, snapshot_download
+from huggingface_hub import login, snapshot_download, HfFolder
 from app.config import Config
 import torch
 import hashlib
+from safetensors.torch import save_file as safetensors_save_file
 
 # Setup logging
 logger = logging.getLogger(__name__)
@@ -74,7 +75,7 @@ def convert_pytorch_to_safetensors(model_path: str) -> None:
         
         logger.info(f"Converting {file} to safetensors format")
         state_dict = torch.load(pytorch_path, map_location='cpu')
-        save_file(state_dict, safetensors_path)
+        safetensors_save_file(state_dict, safetensors_path)
         
         os.remove(pytorch_path)
         logger.info(f"Removed original PyTorch file: {pytorch_path}")
@@ -132,3 +133,13 @@ def find_file(directory: str, filename: str) -> str:
                 return os.path.realpath(file_path)
             return file_path
     return ""
+
+def calculate_checksum(file_path: str) -> str:
+    """
+    Calculate the MD5 checksum of a file.
+    """
+    hash_md5 = hashlib.md5()
+    with open(file_path, "rb") as f:
+        for chunk in iter(lambda: f.read(4096), b""):
+            hash_md5.update(chunk)
+    return hash_md5.hexdigest()
