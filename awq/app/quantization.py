@@ -173,6 +173,9 @@ def validate_quantized_model(output_dir: str) -> bool:
         sample_text = "Hello, how are you?"
         inputs = tokenizer(sample_text, return_tensors="pt")
 
+        # Remove token_type_ids if present
+        inputs.pop('token_type_ids', None)
+
         # Move inputs to the same device as the model
         device = next(model.parameters()).device
         inputs = {k: v.to(device) for k, v in inputs.items()}
