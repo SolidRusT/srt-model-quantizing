@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch, MagicMock
 import torch
-from app.quantization import run_quantization, validate_quantized_model, validate_quant_config, get_quantized_model_size
+from app.quantization import run_quantization, validate_quantized_model, validate_quant_config, get_quantized_model_size, validate_quant_config
 
 class TestQuantization(unittest.TestCase):
     @patch('app.quantization.AutoAWQForCausalLM')
@@ -154,6 +154,43 @@ class TestQuantization(unittest.TestCase):
         }
         with self.assertRaises(ValueError):
             validate_quant_config(invalid_config)
+
+    def test_validate_quant_config_missing_keys(self):
+        invalid_config = {}  # Empty config
+        with self.assertRaises(ValueError):
+            validate_quant_config(invalid_config)
+
+    def test_validate_quant_config_invalid_types(self):
+        invalid_config = {
+            'zero_point': 1,  # Should be boolean
+            'q_group_size': '128',  # Should be integer
+            'w_bit': '4',  # Should be integer
+            'version': 1  # Should be string
+        }
+        with self.assertRaises(ValueError):
+            validate_quant_config(invalid_config)
+
+    @patch('app.quantization.AutoAWQForCausalLM')
+    @patch('app.quantization.AutoTokenizer')
+    def test_run_quantization_general_exception(self, mock_tokenizer, mock_awq):
+        mock_awq.from_pretrained.side_effect = Exception("General error")
+        
+        with self.assertRaises(Exception) as context:
+            run_quantization('/path/to/model', {}, '/path/to/output')
+        
+        self.assertIn("General error", str(context.exception))
+
+    @patch('app.quantization.AutoAWQForCausalLM')
+    @patch('app.quantization.AutoTokenizer')
+    def test_run_quantization_attribute_error_general(self, mock_tokenizer, mock_awq):
+        mock_model = MagicMock()
+        mock_awq.from_pretrained.return_value = mock_model
+        mock_model.quantize.side_effect = AttributeError("General attribute error")
+
+        with self.assertRaises(AttributeError) as context:
+            run_quantization('/path/to/model', {}, '/path/to/output')
+        
+        self.assertIn("General attribute error", str(context.exception))
 
 if __name__ == '__main__':
     unittest.main()
