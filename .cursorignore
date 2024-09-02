@@ -1,1 +1,47 @@
-CURSOR.md
+# Ignore Python cache files
+__pycache__/
+
+# Ignore data and log directories using wildcards and nested patterns
+/{data,logs}/
+/awq/{data,logs}/
+
+# Ignore CURSOR.md files using a wildcard pattern
+**/CURSOR.md
+
+# Ignore environment files using a wildcard pattern
+**/env
+
+# Additional modern ignore patterns
+# Ignore virtual environments
+/.venv/
+/venv/
+/.env/
+/env/
+/ENV/
+/.vscode/
+
+# Ignore IDE and editor files
+/.idea/
+/.vscode/
+*.swp
+*.swo
+
+# Ignore package and build files
+/build/
+/dist/
+*.egg-info/
+*.pyc
+*.pyo
+
+# Ignore version control files
+/.git/
+/.hg/
+/.svn/
+
+# Ignore node modules and package-lock files (if applicable)
+/node_modules/
+/package-lock.json
+
+# Ignore macOS and Windows system files
+.DS_Store
+Thumbs.db
