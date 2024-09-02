@@ -21,14 +21,16 @@ mkdir -p ${work_dir}/repos
 rm -rf ${work_dir}/repos/AutoAWQ_kernels
 git clone https://github.com/casper-hansen/AutoAWQ_kernels.git ${work_dir}/repos/AutoAWQ_kernels
 cd ${work_dir}/repos/AutoAWQ_kernels
-# fix torch version
-sed -i 's/"torch==2\.3\.1"/"torch>=2.3.1"/' setup.py
+# unlock torch version
+sed -i '/requirements = \[/,/]/ s/torch==2/torch>=2/' setup.py
 pip install .
 
 # clone AutoAWQ
 rm -rf ${work_dir}/repos/AutoAWQ
 git clone https://github.com/casper-hansen/AutoAWQ.git ${work_dir}/repos/AutoAWQ
 cd ${work_dir}/repos/AutoAWQ
+# unlock torch version
+sed -i '/requirements = \[/,/]/ s/torch==2/torch>=2/' setup.py
 pip install .
 
 # end
