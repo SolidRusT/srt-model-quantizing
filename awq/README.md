@@ -53,7 +53,7 @@ You can run the quantization process using either of the following methods:
 Example using the combined format:
 
 ```bash
-python app/main.py mist
+python app/main.py mistralai/Mistral-Nemo-Instruct-2407
 ```
 
 For more detailed usage instructions, please refer to the [USAGE.md](USAGE.md) file.
