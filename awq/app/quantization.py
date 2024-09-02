@@ -98,7 +98,7 @@ def run_quantization(model_path: str, quant_config: Dict[str, Any], output_dir: 
             error_msg = str(e)
         logger.error(f"Quantization failed: {error_msg}")
         print(f"Quantization failed: {error_msg}")
-        raise
+        raise RuntimeError(error_msg) from e
     except AttributeError as e:
         if "object has no attribute 'quantize'" in str(e):
             error_msg = (
