@@ -4,10 +4,10 @@ This directory contains the implementation for AWQ (Activation-aware Weight Quan
 
 ## Usage
 
-To use the AWQ quantization tool, make sure you're in the project root directory and run:
+To use the AWQ quantization tool, make sure you're in the `awq` directory and run:
 
 ```bash
-python -m awq <author> <model> [--quanter <quanter>]
+python app/main.py <author> <model> [--quanter <quanter>]
 ```
 
 Arguments:
@@ -15,8 +15,10 @@ Arguments:
 - `<model>`: The name of the model to quantize
 - `--quanter` (optional): Specify a custom quanter name
 
+Example:
+
 ```bash
-python -m awq cognitivecomputations/dolphin-2.9.4-gemma2-2b --quanter solidrust
+python app/main.py cognitivecomputations/dolphin-2.9.4-gemma2-2b --quanter solidrust
 ```
 
 ## Requirements

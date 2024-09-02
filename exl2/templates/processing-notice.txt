@@ -1,0 +1,15 @@
+---
+inference: false
+---
+# {AUTHOR}/{MODEL} Exllama2 Quantization
+
+** PROCESSING .... ETA 30mins **
+
+- Model creator: [{AUTHOR}](https://huggingface.co/{AUTHOR})
+- Original model: [{MODEL}](https://huggingface.co/{AUTHOR}/{MODEL})
+
+### About Exllama2 Quantization
+
+Exllama2 is an efficient quantization method for large language models. It offers faster inference with minimal loss in quality compared to the original model.
+
+This quantized version is being processed and will be available soon. Please check back later for the completed model.
