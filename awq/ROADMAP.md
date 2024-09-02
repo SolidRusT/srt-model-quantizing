@@ -14,8 +14,20 @@
 - [x] Update documentation with new workflow details
 - [x] Reorganize static content templates into a dedicated directory
 - [x] Create Dockerfile for easy setup and deployment
+- [x] Implement model checksum validation
+- [x] Enhance error handling for device mismatch issues during quantization
+- [x] Improve GPU memory reporting and error messages
+- [x] Add support for models that may be partially offloaded to CPU/disk
+- [x] Implement graceful fallback to CPU quantization for large models
+- [x] Improve compatibility checks for AWQ quantization support
+- [ ] Optimize CPU quantization performance for large models
+- [ ] Implement memory usage estimation before quantization to prevent OOM errors
+- [ ] Add progress bar or ETA for CPU quantization
+- [ ] Expand test coverage for different model types and sizes
+- [ ] Refactor main.py for better readability and maintainability
 
 ## Backlog
+- [ ] Implement strategy for handling very large models (e.g., model sharding)
 - [ ] Add option to specify output version (GEMM, GEMV)
 - [ ] Add option to specify output group size (128, 64, 32, etc.)
 - [ ] Add error handling for out-of-memory situations
@@ -27,6 +39,14 @@
 - [ ] Implement parallel processing for faster quantization
 - [ ] Add support for quantizing multiple models in batch
 - [ ] Create a user-friendly CLI interface
+- [ ] Implement support for multi-GPU setups
+- [ ] Add option to specify custom CUDA device
+- [ ] Implement graceful degradation for large models (e.g., automatic sharding)
+- [ ] Implement automatic model sharding for very large models
+- [ ] Add support for distributed quantization across multiple GPUs
+- [ ] Implement a web interface for easier model management and quantization
+- [ ] Add option to specify custom CUDA device in the command line interface
+- [ ] Implement progressive loading for extremely large models
 
 ## Completed
 - [x] Fix model downloading issue in model_utils.py
@@ -39,3 +59,5 @@
 - [x] Implement basic quantization workflow
 - [x] Create and update README.md for AWQ models
 - [x] Implement automatic determination of quanter when not provided
+- [x] Implement model checksum validation
+- [x] Add support for latest Llama 3.1 models

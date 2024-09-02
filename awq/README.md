@@ -9,6 +9,7 @@ SRT Model Quantizing is a tool for downloading models from Hugging Face, quantiz
 - Automatic creation and management of quantized model repositories
 - Idempotent operation (safe to run multiple times)
 - Automatic determination of the quanter (user or organization)
+- Model checksum validation for integrity verification
 
 ## Installation
 
@@ -49,6 +50,16 @@ python app/main.py --author mistralai --model Mistral-7B-Instruct-v0.3 --quanter
 
 For more detailed usage instructions, please refer to the [USAGE.md](USAGE.md) file.
 
+### Model Checksum Validation
+
+The tool now includes a checksum validation feature to ensure the integrity of downloaded models. If you have an expected checksum for a model, you can provide it during the quantization process:
+
+```bash
+python app/main.py --author <author> --model <model> --expected-checksum <expected-checksum>
+```
+
+- `<expected-checksum>`: The expected checksum for the model.
+
 ## Docker Usage
 
 To use the Docker container:
@@ -68,6 +79,30 @@ To use the Docker container:
    ```
 
    Replace `your_token_here` with your Hugging Face token and `your_quanter_name` with your desired quanter name.
+
+## Troubleshooting
+
+### Model Compatibility Issues
+
+1. "LlamaForCausalLM object has no attribute 'quantize'" error:
+   - This error occurs when the loaded model doesn't support AWQ quantization.
+   - Solution: Ensure you're using a model that's compatible with AWQ quantization and that you have the correct version of AutoAWQ installed.
+
+2. "You can't move a model that has some modules offloaded to cpu or disk" error:
+   - This error occurs when the model is too large to fit entirely in GPU memory and some parts are offloaded.
+   - Solution: 
+     - Use a GPU with more memory.
+     - Implement a strategy for handling large models (e.g., model sharding, which is not currently supported in this tool).
+     - Consider using CPU quantization for very large models, although this will be significantly slower.
+
+3. Meta device errors or device mismatch errors:
+   - These errors often occur due to insufficient GPU memory.
+   - Solution:
+     - Use a smaller model.
+     - Use a GPU with more memory.
+     - Increase your GPU memory allocation if possible.
+
+If you encounter any of these issues, please check our issue tracker or open a new issue with details about your setup, the model you're trying to quantize, and the full error message.
 
 ## Contributing
 

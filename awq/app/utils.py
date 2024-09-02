@@ -20,7 +20,7 @@ def create_logger(name, log_dir="logs", level=logging.DEBUG):
     logger = logging.getLogger(name)
     logger.setLevel(level)
 
-    log_file = os.path.join(log_dir, f"{name}.log")
+    log_file = os.path.join(log_dir, f"{name}")
     file_handler = TimedRotatingFileHandler(log_file, when="midnight", interval=1)
     file_handler.suffix = "%Y-%m-%d"
     file_handler.setLevel(level)

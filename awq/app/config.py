@@ -2,7 +2,7 @@
 
 import os
 from dotenv import load_dotenv
-from huggingface_hub import whoami, HfApi
+from huggingface_hub import whoami
 
 load_dotenv()  # This loads the variables from .env file
 

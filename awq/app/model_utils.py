@@ -1,13 +1,10 @@
-# app/model_utils.py
-
 import os
 import logging
-from typing import Dict, List
-from huggingface_hub import login, hf_hub_download, snapshot_download, HfApi
-from tqdm import tqdm
+from typing import Dict
+from huggingface_hub import login, snapshot_download
 from app.config import Config
-import json
 import torch
+import hashlib
 
 # Setup logging
 logger = logging.getLogger(__name__)
@@ -99,10 +96,30 @@ def validate_model_checksum(model_path: str, expected_checksum: str) -> bool:
     """
     Validate the model file(s) checksum.
     """
-    # Implement checksum validation logic here
-    # This is a placeholder and should be replaced with actual checksum calculation
     logger.info(f"Validating checksum for model at {model_path}")
-    return True  # Placeholder return value
+    
+    calculated_checksum = calculate_directory_checksum(model_path)
+    
+    if calculated_checksum == expected_checksum:
+        logger.info("Checksum validation successful")
+        return True
+    else:
+        logger.warning(f"Checksum mismatch. Expected: {expected_checksum}, Calculated: {calculated_checksum}")
+        return False
+
+def calculate_directory_checksum(directory: str) -> str:
+    """
+    Calculate a checksum for all files in a directory.
+    """
+    checksums = []
+    for root, _, files in os.walk(directory):
+        for file in sorted(files):  # Sort to ensure consistent order
+            file_path = os.path.join(root, file)
+            with open(file_path, "rb") as f:
+                file_hash = hashlib.sha256(f.read()).hexdigest()
+                checksums.append(file_hash)
+    
+    return hashlib.sha256("".join(checksums).encode()).hexdigest()
 
 def find_file(directory: str, filename: str) -> str:
     """
