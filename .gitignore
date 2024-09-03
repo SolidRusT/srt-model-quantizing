@@ -1,3 +1,9 @@
 temp/
 venv/
+*venv/
+.venv/
 downloaded_models/
+data/
+logs/
+.env
+__pycache__/

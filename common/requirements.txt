@@ -1,8 +1,0 @@
-#autoawq==0.1.8
-#autoawq-kernels==0.0.1
-autoawq
-autoawq-kernels
-transformers
-torch
-pandas
-#exllamav2
