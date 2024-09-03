@@ -1,24 +1,21 @@
+# Ignore temporary and virtual environment directories
+**/temp/
+**/venv/
+**/.venv/
+**/*venv/
+
+# Ignore downloaded models and data directories anywhere in the structure
+**/downloaded_models/
+**/data/
+
+# Ignore log directories anywhere in the structure
+**/logs/
+
+# Ignore environment files
+.env
+
 # Ignore Python cache files
-__pycache__/
-
-# Ignore data and log directories using wildcards and nested patterns
-/{data,logs}/
-/awq/{data,logs}/
-
-# Ignore CURSOR.md files using a wildcard pattern
-**/CURSOR.md
-
-# Ignore environment files using a wildcard pattern
-**/env
-
-# Additional modern ignore patterns
-# Ignore virtual environments
-/.venv/
-/venv/
-/.env/
-/env/
-/ENV/
-/.vscode/
+**/__pycache__/
 
 # Ignore IDE and editor files
 /.idea/
@@ -27,8 +24,8 @@ __pycache__/
 *.swo
 
 # Ignore package and build files
-/build/
-/dist/
+**/build/
+**/dist/
 *.egg-info/
 *.pyc
 *.pyo
@@ -38,10 +35,9 @@ __pycache__/
 /.hg/
 /.svn/
 
-# Ignore node modules and package-lock files (if applicable)
-/node_modules/
-/package-lock.json
-
 # Ignore macOS and Windows system files
 .DS_Store
 Thumbs.db
+
+# Ignore CURSOR.md files using a wildcard pattern
+**/CURSOR.md

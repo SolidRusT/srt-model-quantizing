@@ -1,9 +1,40 @@
-temp/
-venv/
-*venv/
-.venv/
-downloaded_models/
-data/
-logs/
+# Ignore temporary and virtual environment directories
+**/temp/
+**/venv/
+**/.venv/
+**/*venv/
+
+# Ignore downloaded models and data directories anywhere in the structure
+**/downloaded_models/
+**/data/
+
+# Ignore log directories anywhere in the structure
+**/logs/
+
+# Ignore environment files
 .env
-__pycache__/
+
+# Ignore Python cache files
+**/__pycache__/
+
+# Ignore IDE and editor files
+/.idea/
+/.vscode/
+*.swp
+*.swo
+
+# Ignore package and build files
+**/build/
+**/dist/
+*.egg-info/
+*.pyc
+*.pyo
+
+# Ignore version control files
+/.git/
+/.hg/
+/.svn/
+
+# Ignore macOS and Windows system files
+.DS_Store
+Thumbs.db
