@@ -9,6 +9,7 @@ my_home=${HOME}
 # create python virtualenv
 rm -rf ${my_home}/venv-awq-master
 python -m venv ${my_home}/venv-awq-master
+deactivate
 source ${my_home}/venv-awq-master/bin/activate
 pip install --upgrade pip
 pip install wheel
