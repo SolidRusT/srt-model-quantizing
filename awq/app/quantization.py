@@ -15,17 +15,17 @@ logger.info(f"AutoAWQ version: {awq.__version__}")
 print(f"AutoAWQ version: {awq.__version__}")
 
 def run_quantization(model_path: str, quant_config: Dict[str, Any], output_dir: str) -> None:
-    """
-    Run the quantization process on the given model using AutoAWQ.
-
-    Args:
-        model_path (str): Path to the model directory.
-        quant_config (Dict[str, Any]): Configuration for quantization.
-        output_dir (str): Directory to save the quantized model.
-    """
     try:
         logger.info(f"Starting quantization for model at {model_path}")
         print(f"Starting quantization for model at {model_path}")
+        
+        # Print information about the model files
+        logger.info(f"Model files in {model_path}:")
+        for item in os.listdir(model_path):
+            file_path = os.path.join(model_path, item)
+            file_size = os.path.getsize(file_path) / (1024 * 1024)  # Size in MB
+            logger.info(f"- {item}: {file_size:.2f} MB")
+            print(f"- {item}: {file_size:.2f} MB")
         
         # Test model loading
         if not test_model_loading(model_path):
@@ -198,6 +198,14 @@ def test_model_loading(model_path: str):
             logger.info(f"- {item}")
             print(f"- {item}")
         
+        # Check for the existence of necessary files
+        required_files = ['config.json', 'model.safetensors', 'tokenizer.json']
+        for file in required_files:
+            if not os.path.exists(os.path.join(model_path, file)):
+                logger.error(f"Required file {file} not found in {model_path}")
+                print(f"Required file {file} not found in {model_path}")
+                return False
+        
         # Try to load the config first
         try:
             from transformers import AutoConfig
@@ -210,16 +218,21 @@ def test_model_loading(model_path: str):
             return False
         
         # Now try to load the model
-        model = AutoAWQForCausalLM.from_pretrained(model_path, trust_remote_code=True)
-        logger.info("Model loaded successfully for testing")
-        print("Model loaded successfully for testing")
-        
-        # Check if the model has the expected attributes
-        if not hasattr(model, 'quantize'):
-            logger.warning("Loaded model does not have 'quantize' method")
-            print("Loaded model does not have 'quantize' method")
-        
-        return True
+        try:
+            model = AutoAWQForCausalLM.from_pretrained(model_path, trust_remote_code=True)
+            logger.info("Model loaded successfully for testing")
+            print("Model loaded successfully for testing")
+            
+            # Check if the model has the expected attributes
+            if not hasattr(model, 'quantize'):
+                logger.warning("Loaded model does not have 'quantize' method")
+                print("Loaded model does not have 'quantize' method")
+            
+            return True
+        except Exception as model_error:
+            logger.error(f"Failed to load model: {str(model_error)}")
+            print(f"Failed to load model: {str(model_error)}")
+            return False
     except Exception as e:
         logger.error(f"Failed to load model for testing: {str(e)}")
         print(f"Failed to load model for testing: {str(e)}")

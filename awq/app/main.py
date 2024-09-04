@@ -136,6 +136,12 @@ def main(author: str, model: str, quanter: str = None, expected_checksum: str = 
                 logger.info(f"Converted model size: {converted_model_size / (1024 * 1024):.2f} MB")
                 print(f"Converted model size: {converted_model_size / (1024 * 1024):.2f} MB")
 
+                # Check if model.safetensors exists after conversion
+                if not os.path.exists(os.path.join(converted_path, 'model.safetensors')):
+                    logger.error("model.safetensors not found after conversion. Aborting quantization.")
+                    print("model.safetensors not found after conversion. Aborting quantization.")
+                    return
+
                 # Quantize the model
                 logger.info("Starting model quantization")
                 print("Starting model quantization")
