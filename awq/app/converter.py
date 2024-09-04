@@ -1,39 +1,83 @@
 # app/converter.py
 
 import os
-import glob
-import torch
+import json
 import logging
-from safetensors.torch import save_file as safetensors_save_file
 from typing import Dict, Any
+from safetensors.torch import save_file as safetensors_save_file, load_file
+import torch
 
 logger = logging.getLogger(__name__)
 
 def convert_model_to_safetensors(model_path: str) -> str:
     """
-    Convert PyTorch model files to safetensors format if necessary.
-    If the model is already in safetensors format, it will be left as is.
-
-    Args:
-        model_path (str): Path to the directory containing model files.
-
-    Returns:
-        str: Path to the directory containing the converted (or original) model files.
+    Convert PyTorch model files to safetensors format or merge sharded safetensors.
     """
-    logger.info(f"Checking model files in {model_path}")
+    logger.info(f"Converting model at {model_path} to safetensors format")
     
-    pytorch_files = glob.glob(os.path.join(model_path, '*.bin')) + glob.glob(os.path.join(model_path, '*.pt'))
+    # Check if model.safetensors already exists
+    if os.path.exists(os.path.join(model_path, 'model.safetensors')):
+        logger.info("model.safetensors already exists. Skipping conversion.")
+        return model_path
+
+    # Check if we have sharded safetensors files
+    sharded_safetensors = [f for f in os.listdir(model_path) if f.startswith('pytorch_model-') and f.endswith('.safetensors')]
     
-    for file in pytorch_files:
-        pytorch_path = file
-        safetensors_path = os.path.splitext(pytorch_path)[0] + '.safetensors'
+    if sharded_safetensors:
+        logger.info("Found sharded safetensors files. Merging them.")
+        merged_state_dict = {}
+        total_size = 0
+        for shard in sorted(sharded_safetensors):
+            shard_path = os.path.join(model_path, shard)
+            shard_dict = load_file(shard_path)
+            merged_state_dict.update(shard_dict)
+            total_size += os.path.getsize(shard_path)
+            logger.info(f"Loaded shard: {shard}, size: {os.path.getsize(shard_path) / 1024 / 1024:.2f} MB")
         
-        if not os.path.exists(safetensors_path):
-            state_dict = torch.load(pytorch_path, map_location='cpu')
-            safetensors_save_file(state_dict, safetensors_path)
-            os.remove(pytorch_path)
+        output_path = os.path.join(model_path, 'model.safetensors')
+        safetensors_save_file(merged_state_dict, output_path)
+        logger.info(f"Merged safetensors saved to {output_path}")
+        logger.info(f"Total size of merged model: {total_size / 1024 / 1024:.2f} MB")
+        
+        # Remove sharded files
+        for shard in sharded_safetensors:
+            os.remove(os.path.join(model_path, shard))
+            logger.info(f"Removed shard: {shard}")
+    else:
+        # Check for PyTorch bin files
+        pytorch_files = [f for f in os.listdir(model_path) if f.endswith('.bin')]
+        
+        if pytorch_files:
+            logger.info("Found PyTorch bin files. Converting to safetensors.")
+            merged_state_dict = {}
+            total_size = 0
+            for pytorch_file in pytorch_files:
+                pytorch_path = os.path.join(model_path, pytorch_file)
+                logger.info(f"Loading PyTorch file: {pytorch_file}")
+                state_dict = torch.load(pytorch_path, map_location='cpu')
+                merged_state_dict.update(state_dict)
+                total_size += os.path.getsize(pytorch_path)
+                logger.info(f"Loaded {pytorch_file}, size: {os.path.getsize(pytorch_path) / 1024 / 1024:.2f} MB")
+            
+            output_path = os.path.join(model_path, 'model.safetensors')
+            logger.info("Saving merged state dict to safetensors format...")
+            safetensors_save_file(merged_state_dict, output_path)
+            logger.info(f"Converted safetensors saved to {output_path}")
+            logger.info(f"Total size of converted model: {total_size / 1024 / 1024:.2f} MB")
+            
+            # Remove original PyTorch files
+            for pytorch_file in pytorch_files:
+                os.remove(os.path.join(model_path, pytorch_file))
+                logger.info(f"Removed original PyTorch file: {pytorch_file}")
         else:
-            logger.info(f"Safetensors file already exists for {pytorch_path}. Skipping conversion.")
+            logger.error("No PyTorch bin files or safetensors files found.")
+            raise FileNotFoundError("No model files found to convert")
+    
+    # Update or remove pytorch_model.bin.index.json
+    index_file = os.path.join(model_path, 'pytorch_model.bin.index.json')
+    if os.path.exists(index_file):
+        os.remove(index_file)
+        logger.info("Removed pytorch_model.bin.index.json")
     
     return model_path
 
@@ -94,7 +138,7 @@ def save_safetensors_model(state_dict: Dict[str, Any], output_path: str, max_sha
     
     if sum(tensor.numel() * tensor.element_size() for tensor in state_dict.values()) <= max_shard_size:
         logger.info(f"Saving model to single file: {output_path}")
-        save_file(state_dict, output_path)
+        safetensors_save_file(state_dict, output_path)
     else:
         logger.info(f"Model size exceeds {max_shard_size} bytes. Splitting into multiple files.")
         shard_index = 0
@@ -105,7 +149,7 @@ def save_safetensors_model(state_dict: Dict[str, Any], output_path: str, max_sha
             tensor_size = tensor.numel() * tensor.element_size()
             if current_size + tensor_size > max_shard_size:
                 shard_path = f"{output_path}.{shard_index:05d}-of-{len(state_dict):05d}.safetensors"
-                save_file(current_shard, shard_path)
+                safetensors_save_file(current_shard, shard_path)
                 logger.info(f"Saved shard {shard_index} to {shard_path}")
                 shard_index += 1
                 current_shard = {}
@@ -116,7 +160,7 @@ def save_safetensors_model(state_dict: Dict[str, Any], output_path: str, max_sha
 
         if current_shard:
             shard_path = f"{output_path}.{shard_index:05d}-of-{len(state_dict):05d}.safetensors"
-            save_file(current_shard, shard_path)
+            safetensors_save_file(current_shard, shard_path)
             logger.info(f"Saved final shard {shard_index} to {shard_path}")
 
         logger.info(f"Model split into {shard_index + 1} shards")

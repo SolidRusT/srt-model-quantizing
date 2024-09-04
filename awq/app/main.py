@@ -4,12 +4,18 @@ import argparse
 import logging
 import re
 from huggingface_hub import HfApi, create_repo, Repository, HfFolder, whoami
+import shutil
 
 # Add the parent directory to the Python path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from app.config import Config
-from app.model_utils import authenticate_huggingface, download_model, check_model_files
+from app.model_utils import (
+    authenticate_huggingface,
+    download_model,
+    check_model_files,
+    get_model_size  # Add this import
+)
 from app.quantization import run_quantization, validate_quantized_model
 from app.converter import convert_model_to_safetensors
 from app.template_parser import process_template
@@ -17,14 +23,6 @@ from app.utils import create_logger
 
 # Initialize the logger
 logger = create_logger(Config.LOG_FILE)
-
-def get_default_quanter(token):
-    try:
-        user_info = whoami(token)
-        return user_info['name']
-    except Exception as e:
-        logger.warning(f"Failed to retrieve default quanter: {str(e)}")
-        return None
 
 def parse_model_string(model_string):
     """Parse the combined author/model string."""
@@ -58,9 +56,18 @@ def main(author: str, model: str, quanter: str = None, expected_checksum: str = 
             try:
                 logger.info(f"Downloading model {author}/{model}")
                 print(f"Downloading model {author}/{model}")
-                model_path = download_model(author, model)
+                model_path = download_model(author, model, expected_checksum)
                 logger.info(f"Model downloaded successfully to {model_path}")
                 print(f"Model downloaded successfully to {model_path}")
+                
+                # Add model size information
+                try:
+                    model_size = get_model_size(model_path)
+                    logger.info(f"Model size: {model_size / (1024 * 1024):.2f} MB")
+                    print(f"Model size: {model_size / (1024 * 1024):.2f} MB")
+                except Exception as e:
+                    logger.error(f"Failed to get model size: {str(e)}")
+                    print(f"Failed to get model size: {str(e)}")
             except Exception as e:
                 logger.error(f"Failed to download model {author}/{model}: {str(e)}")
                 print(f"Failed to download model {author}/{model}: {str(e)}")
@@ -110,17 +117,52 @@ def main(author: str, model: str, quanter: str = None, expected_checksum: str = 
                 logger.info("Model files are valid. Proceeding with conversion and quantization.")
                 print("Model files are valid. Proceeding with conversion and quantization.")
                 
-                # Convert the model to safetensors format if necessary
-                converted_path = convert_model_to_safetensors(model_path)
+                # Convert the model to a single safetensors file if needed
+                logger.info("Checking if model conversion to safetensors format is needed")
+                print("Checking if model conversion to safetensors format is needed")
+                if os.path.exists(os.path.join(model_path, 'model.safetensors')):
+                    logger.info("model.safetensors already exists. Skipping conversion.")
+                    print("model.safetensors already exists. Skipping conversion.")
+                    converted_path = model_path
+                else:
+                    logger.info("Starting model conversion to safetensors format")
+                    print("Starting model conversion to safetensors format")
+                    converted_path = convert_model_to_safetensors(model_path)
+                    logger.info(f"Model converted and saved to {converted_path}")
+                    print(f"Model converted and saved to {converted_path}")
+
+                # Add this line to print the model size after conversion
+                converted_model_size = get_model_size(converted_path)
+                logger.info(f"Converted model size: {converted_model_size / (1024 * 1024):.2f} MB")
+                print(f"Converted model size: {converted_model_size / (1024 * 1024):.2f} MB")
 
                 # Quantize the model
                 logger.info("Starting model quantization")
                 print("Starting model quantization")
-                run_quantization(converted_path, Config.QUANT_CONFIG, awq_model_path)
-            else:
-                logger.error("Invalid model files. Quantization process aborted.")
-                print("Invalid model files. Quantization process aborted.")
-                return
+                try:
+                    run_quantization(converted_path, Config.QUANT_CONFIG, awq_model_path)
+                except Exception as e:
+                    logger.error(f"Quantization failed: {str(e)}")
+                    print(f"Quantization failed: {str(e)}")
+                    logger.exception("Detailed traceback:")
+                    return
+
+        # After quantization
+        if os.path.exists(os.path.join(awq_model_path, 'model.safetensors')):
+            logger.info("AWQ model created successfully.")
+            print("AWQ model created successfully.")
+        else:
+            logger.error("AWQ model creation failed. model.safetensors not found in the output directory.")
+            print("AWQ model creation failed. model.safetensors not found in the output directory.")
+            return
+
+        # Copy config.json and tokenizer files to AWQ model directory if they don't exist
+        for file in ['config.json', 'tokenizer.json', 'tokenizer_config.json']:
+            src = os.path.join(model_path, file)
+            dst = os.path.join(awq_model_path, file)
+            if os.path.exists(src) and not os.path.exists(dst):
+                shutil.copy2(src, dst)
+                logger.info(f"Copied {file} to AWQ model directory")
 
         # 6. Validate AWQ model
         if validate_quantized_model(awq_model_path):

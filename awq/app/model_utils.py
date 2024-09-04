@@ -3,9 +3,7 @@ import logging
 from typing import Dict
 from huggingface_hub import login, snapshot_download, HfFolder
 from app.config import Config
-import torch
 import hashlib
-from safetensors.torch import save_file as safetensors_save_file
 
 # Setup logging
 logger = logging.getLogger(__name__)
@@ -25,14 +23,21 @@ def authenticate_huggingface():
         logger.error("HF_ACCESS_TOKEN not found in environment variables or Hugging Face cache.")
         return None
 
-def download_model(author: str, model: str) -> str:
+def download_model(author: str, model: str, expected_checksum: str = None) -> str:
     """
-    Download the model from Hugging Face, handling the new blob structure.
+    Download the model from Hugging Face, handling the new blob structure and validating checksum.
     """
     try:
         logger.info(f"Attempting to download model {author}/{model}")
         model_path = snapshot_download(repo_id=f"{author}/{model}", local_dir=os.path.join(Config.DATA_DIR, f"{author}-{model}"))
         logger.info(f"Model downloaded successfully to {model_path}")
+        
+        if expected_checksum:
+            if validate_model_checksum(model_path, expected_checksum):
+                logger.info("Model checksum validated successfully")
+            else:
+                raise ValueError("Model checksum validation failed")
+        
         return model_path
     except Exception as e:
         logger.error(f"Error downloading model {author}/{model}: {str(e)}")
@@ -49,9 +54,11 @@ def check_model_files(model_path: str) -> bool:
             logger.error(f"Required file {file} not found in {model_path}")
             return False
     
-    # Check for either pytorch_model.bin or sharded model files
+    # Check for either pytorch_model.bin, model.safetensors, or sharded model files
     if find_file(model_path, 'pytorch_model.bin'):
         logger.info(f"Found single file model: pytorch_model.bin")
+    elif find_file(model_path, 'model.safetensors'):
+        logger.info(f"Found single file model: model.safetensors")
     elif find_file(model_path, 'model.safetensors.index.json'):
         logger.info(f"Found sharded safetensors model")
     elif find_file(model_path, 'pytorch_model.bin.index.json'):
@@ -62,23 +69,6 @@ def check_model_files(model_path: str) -> bool:
     
     logger.info(f"All required model files found in {model_path}")
     return True
-
-def convert_pytorch_to_safetensors(model_path: str) -> None:
-    """
-    Convert PyTorch model files to safetensors format.
-    """
-    pytorch_files = [f for f in os.listdir(model_path) if f.endswith('.bin') or f.endswith('.pt')]
-    
-    for file in pytorch_files:
-        pytorch_path = os.path.join(model_path, file)
-        safetensors_path = os.path.join(model_path, file.rsplit('.', 1)[0] + '.safetensors')
-        
-        logger.info(f"Converting {file} to safetensors format")
-        state_dict = torch.load(pytorch_path, map_location='cpu')
-        safetensors_save_file(state_dict, safetensors_path)
-        
-        os.remove(pytorch_path)
-        logger.info(f"Removed original PyTorch file: {pytorch_path}")
 
 def get_model_size(model_path: str) -> int:
     """
@@ -133,13 +123,3 @@ def find_file(directory: str, filename: str) -> str:
                 return os.path.realpath(file_path)
             return file_path
     return ""
-
-def calculate_checksum(file_path: str) -> str:
-    """
-    Calculate the MD5 checksum of a file.
-    """
-    hash_md5 = hashlib.md5()
-    with open(file_path, "rb") as f:
-        for chunk in iter(lambda: f.read(4096), b""):
-            hash_md5.update(chunk)
-    return hash_md5.hexdigest()

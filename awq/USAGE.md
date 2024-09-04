@@ -11,6 +11,7 @@ This guide provides detailed instructions on how to use the SRT Model Quantizing
 ## Setting Up
 
 1. Ensure you have set up your Hugging Face token:
+
    - Set the environment variable: `export HF_ACCESS_TOKEN=your_token_here`
    - Or use the Hugging Face CLI: `huggingface-cli login`
 
@@ -21,6 +22,7 @@ This guide provides detailed instructions on how to use the SRT Model Quantizing
 You can run the quantization process using either of the following methods:
 
 1. Combined author/model format:
+
    ```bash
    python app/main.py <author>/<model>
    ```
@@ -33,11 +35,13 @@ You can run the quantization process using either of the following methods:
 ## Examples
 
 1. Quantize a model using the combined format:
+
    ```bash
    python app/main.py cognitivecomputations/dolphin-2.9.4-gemma2-2b
    ```
 
 2. Quantize a model and publish under a specific organization:
+
    ```bash
    python app/main.py cognitivecomputations/dolphin-2.9.4-gemma2-2b --quanter solidrust
    ```
@@ -53,8 +57,9 @@ You can run the quantization process using either of the following methods:
 - `--expected-checksum <checksum>`: Provide an expected checksum for the model to ensure integrity.
 
 Example with checksum:
+
 ```bash
-python app/main.py mistralai/Mist
+python app/main.py --author cognitivecomputations --model dolphin-2.9.4-gemma2-2b --expected-checksum "ccc33ca5cead77295e378dc55e887ee19a2638a6"
 ```
 
 ## Process Overview
@@ -70,6 +75,7 @@ python app/main.py mistralai/Mist
 ## Idempotent Operation
 
 The tool is designed to be idempotent. If you run the command multiple times:
+
 - It will not re-download the model if it already exists locally.
 - It will not re-quantize the model if a quantized version already exists.
 - It will validate an existing quantized model before deciding to re-quantize.

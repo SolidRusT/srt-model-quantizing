@@ -9,6 +9,11 @@ import torch
 
 logger = logging.getLogger(__name__)
 
+# At the beginning of the file, add:
+import awq
+logger.info(f"AutoAWQ version: {awq.__version__}")
+print(f"AutoAWQ version: {awq.__version__}")
+
 def run_quantization(model_path: str, quant_config: Dict[str, Any], output_dir: str) -> None:
     """
     Run the quantization process on the given model using AutoAWQ.
@@ -21,6 +26,10 @@ def run_quantization(model_path: str, quant_config: Dict[str, Any], output_dir: 
     try:
         logger.info(f"Starting quantization for model at {model_path}")
         print(f"Starting quantization for model at {model_path}")
+        
+        # Test model loading
+        if not test_model_loading(model_path):
+            raise ValueError("Failed to load model for testing. Aborting quantization.")
         
         # Check CUDA availability
         cuda_available = torch.cuda.is_available()
@@ -35,30 +44,38 @@ def run_quantization(model_path: str, quant_config: Dict[str, Any], output_dir: 
             print("WARNING: CUDA is not available. Using CPU for quantization. This will be significantly slower.")
 
         # Load model and tokenizer
-        try:
-            model = AutoAWQForCausalLM.from_pretrained(
-                model_path,
-                low_cpu_mem_usage=True,
-                torch_dtype=torch.float16 if cuda_available else torch.float32,
-                device_map="auto" if cuda_available else None
-            )
-        except RuntimeError as e:
-            if "CUDA out of memory" in str(e):
-                logger.error("CUDA out of memory error. The model is too large for your GPU.")
-                print("CUDA out of memory error. The model is too large for your GPU.")
-                raise
-            else:
-                raise
+        logger.info(f"Loading model from {model_path}")
+        print(f"Loading model from {model_path}")
+        model = AutoAWQForCausalLM.from_pretrained(
+            model_path,
+            low_cpu_mem_usage=True,
+            torch_dtype=torch.float16 if cuda_available else torch.float32,
+            device_map="auto" if cuda_available else None
+        )
+        logger.info("Model loaded successfully")
+        print("Model loaded successfully")
 
+        logger.info(f"Loading tokenizer from {model_path}")
+        print(f"Loading tokenizer from {model_path}")
         tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
+        logger.info("Tokenizer loaded successfully")
+        print("Tokenizer loaded successfully")
 
         # Quantize
         logger.info("Performing AWQ quantization")
         print("Performing AWQ quantization")
         
-        # Check if the model has the quantize method
+        logger.info(f"Model type: {type(model)}")
+        logger.info(f"Available methods: {dir(model)}")
+        
         if hasattr(model, 'quantize'):
-            model.quantize(tokenizer, quant_config=quant_config)
+            logger.info(f"Quantization config: {quant_config}")
+            print(f"Quantization config: {quant_config}")
+            quantized_model = model.quantize(tokenizer, quant_config=quant_config)
+            if quantized_model is None:
+                raise ValueError("Quantization failed: model.quantize returned None")
+            logger.info("Quantization completed successfully")
+            print("Quantization completed successfully")
         else:
             logger.error("The loaded model does not support the 'quantize' method. It may not be compatible with AWQ quantization.")
             print("The loaded model does not support the 'quantize' method. It may not be compatible with AWQ quantization.")
@@ -67,53 +84,15 @@ def run_quantization(model_path: str, quant_config: Dict[str, Any], output_dir: 
         # Save quantized model
         logger.info(f"Saving quantized model to {output_dir}")
         print(f"Saving quantized model to {output_dir}")
-        model.save_quantized(output_dir)
+        quantized_model.save_quantized(output_dir)
         tokenizer.save_pretrained(output_dir)
 
         logger.info(f"Quantization completed successfully. Quantized model saved to {output_dir}")
         print(f"Quantization completed successfully. Quantized model saved to {output_dir}")
-    except RuntimeError as e:
-        if "CUDA out of memory" in str(e):
-            error_msg = (
-                "CUDA out of memory error. The model is too large for your GPU. "
-                "Try using a smaller model or a GPU with more memory."
-            )
-        elif "Cannot copy out of meta tensor" in str(e):
-            error_msg = (
-                "Meta device error. This may be due to insufficient GPU memory. "
-                "Try increasing your GPU memory allocation or using a smaller model."
-            )
-        elif "Expected all tensors to be on the same device" in str(e):
-            error_msg = (
-                "Device mismatch error during quantization. "
-                "This may be due to insufficient GPU memory. "
-                "Try using a smaller model or increasing your GPU memory allocation."
-            )
-        elif "You can't move a model that has some modules offloaded to cpu or disk" in str(e):
-            error_msg = (
-                "Model offloading error. The model is too large to fit entirely in GPU memory. "
-                "Try using a GPU with more memory or implement a strategy for handling large models."
-            )
-        else:
-            error_msg = str(e)
-        logger.error(f"Quantization failed: {error_msg}")
-        print(f"Quantization failed: {error_msg}")
-        raise RuntimeError(error_msg) from e
-    except AttributeError as e:
-        if "object has no attribute 'quantize'" in str(e):
-            error_msg = (
-                "The loaded model does not support AWQ quantization. "
-                "Make sure you're using a compatible model and the correct version of AutoAWQ."
-            )
-            logger.error(f"Quantization failed: {error_msg}")
-            print(f"Quantization failed: {error_msg}")
-        else:
-            logger.error(f"Quantization failed: {str(e)}")
-            print(f"Quantization failed: {str(e)}")
-        raise
     except Exception as e:
         logger.error(f"Quantization failed: {str(e)}")
         print(f"Quantization failed: {str(e)}")
+        logger.exception("Detailed traceback:")
         raise
 
 def validate_quant_config(quant_config: dict) -> None:
@@ -200,4 +179,17 @@ def validate_quantized_model(output_dir: str) -> bool:
     except Exception as e:
         logger.error(f"Quantized model validation failed: {str(e)}")
         print(f"Quantized model validation failed: {str(e)}")
+        return False
+
+def test_model_loading(model_path: str):
+    try:
+        logger.info(f"Testing model loading from {model_path}")
+        print(f"Testing model loading from {model_path}")
+        model = AutoAWQForCausalLM.from_pretrained(model_path)
+        logger.info("Model loaded successfully for testing")
+        print("Model loaded successfully for testing")
+        return True
+    except Exception as e:
+        logger.error(f"Failed to load model for testing: {str(e)}")
+        print(f"Failed to load model for testing: {str(e)}")
         return False

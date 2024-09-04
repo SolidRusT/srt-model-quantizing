@@ -7,7 +7,7 @@ See the [.cursorrules](.cursorrules) file for the system prompt.
 This is a good starting point to begin a development cycle.
 
 ```plaintext
-My @Codebase is updated. Let's begin the next development cycle for our quantization pipeline app. Start by reviewing the repository structure, identifying any dead or duplicate code, and addressing incomplete sections. Check for any missing or outdated documentation, ensuring that the README.md and other instructional materials are up-to-date. Use our ROADMAP.md file to track progress, priorities, and any adjustments needed across this cycle. Propose a prioritized list of actions to enhance the quality and maintainability of the codebase, while ensuring that all changes are reflected in the alignment file.
+My @Codebase is updated. Let's begin the next development cycle for our quantization pipeline app. Start by reviewing the repository structure, and check for any missing or outdated documentation, ensuring that the README.md and other instructional materials are up-to-date. Use our ROADMAP.md file to track progress, priorities, and any adjustments needed across this cycle. Propose a prioritized list of actions to enhance the quality and maintainability of the codebase, while ensuring that all changes are reflected in the alignment file.
 ```
 
 ## Let's Proceed
