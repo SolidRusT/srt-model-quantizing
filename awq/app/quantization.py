@@ -3,14 +3,14 @@
 import os
 import logging
 from typing import Dict, Any
-from awq import AutoAWQForCausalLM
+from awq import AutoAWQForCausalLM, __version__ as awq_version
 from transformers import AutoTokenizer
 import torch
 
 logger = logging.getLogger(__name__)
 
-logger.info(f"AutoAWQ version: {awq.__version__}")
-print(f"AutoAWQ version: {awq.__version__}")
+logger.info(f"AutoAWQ version: {awq_version}")
+print(f"AutoAWQ version: {awq_version}")
 
 def run_quantization(model_path: str, quant_config: Dict[str, Any], output_dir: str) -> None:
     """
