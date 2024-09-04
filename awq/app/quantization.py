@@ -4,8 +4,9 @@ import os
 import logging
 from typing import Dict, Any
 from awq import AutoAWQForCausalLM
-from transformers import AutoTokenizer
+from transformers import AutoTokenizer, AutoConfig, AutoModelForCausalLM
 import torch
+from safetensors import safe_open
 
 logger = logging.getLogger(__name__)
 
