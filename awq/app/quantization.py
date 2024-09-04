@@ -47,10 +47,12 @@ def run_quantization(model_path: str, quant_config: Dict[str, Any], output_dir: 
         # Load model and tokenizer
         logger.info(f"Loading model from {model_path}")
         print(f"Loading model from {model_path}")
-        model = AutoAWQForCausalLM.from_pretrained(
+        
+        # Use AutoModelForCausalLM instead of AutoAWQForCausalLM for initial loading
+        model = AutoModelForCausalLM.from_pretrained(
             model_path,
-            low_cpu_mem_usage=True,
             torch_dtype=torch.float16 if cuda_available else torch.float32,
+            low_cpu_mem_usage=True,
             device_map="auto" if cuda_available else None
         )
         logger.info("Model loaded successfully")
@@ -69,10 +71,13 @@ def run_quantization(model_path: str, quant_config: Dict[str, Any], output_dir: 
         logger.info(f"Model type: {type(model)}")
         logger.info(f"Available methods: {dir(model)}")
         
-        if hasattr(model, 'quantize'):
+        # Initialize AutoAWQForCausalLM with the loaded model
+        awq_model = AutoAWQForCausalLM.from_pretrained(model)
+        
+        if hasattr(awq_model, 'quantize'):
             logger.info(f"Quantization config: {quant_config}")
             print(f"Quantization config: {quant_config}")
-            quantized_model = model.quantize(tokenizer, quant_config=quant_config)
+            quantized_model = awq_model.quantize(tokenizer, quant_config=quant_config)
             if quantized_model is None:
                 raise ValueError("Quantization failed: model.quantize returned None")
             logger.info("Quantization completed successfully")
