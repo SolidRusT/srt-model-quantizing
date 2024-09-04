@@ -124,6 +124,10 @@ def main(author: str, model: str, quanter: str = None, expected_checksum: str = 
                     logger.info("model.safetensors already exists. Skipping conversion.")
                     print("model.safetensors already exists. Skipping conversion.")
                     converted_path = model_path
+                elif os.path.exists(os.path.join(model_path, 'model.safetensors.index.json')):
+                    logger.info("Sharded safetensors model found. No conversion needed.")
+                    print("Sharded safetensors model found. No conversion needed.")
+                    converted_path = model_path
                 else:
                     logger.info("Starting model conversion to safetensors format")
                     print("Starting model conversion to safetensors format")
@@ -136,10 +140,11 @@ def main(author: str, model: str, quanter: str = None, expected_checksum: str = 
                 logger.info(f"Converted model size: {converted_model_size / (1024 * 1024):.2f} MB")
                 print(f"Converted model size: {converted_model_size / (1024 * 1024):.2f} MB")
 
-                # Check if model.safetensors exists after conversion
-                if not os.path.exists(os.path.join(converted_path, 'model.safetensors')):
-                    logger.error("model.safetensors not found after conversion. Aborting quantization.")
-                    print("model.safetensors not found after conversion. Aborting quantization.")
+                # Check if model weights exist after conversion
+                if not (os.path.exists(os.path.join(converted_path, 'model.safetensors')) or 
+                        os.path.exists(os.path.join(converted_path, 'model.safetensors.index.json'))):
+                    logger.error("No safetensors model weights found after conversion. Aborting quantization.")
+                    print("No safetensors model weights found after conversion. Aborting quantization.")
                     return
 
                 # Quantize the model

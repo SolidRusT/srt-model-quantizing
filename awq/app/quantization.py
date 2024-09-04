@@ -199,12 +199,28 @@ def test_model_loading(model_path: str):
             print(f"- {item}")
         
         # Check for the existence of necessary files
-        required_files = ['config.json', 'model.safetensors', 'tokenizer.json']
+        required_files = ['config.json']
         for file in required_files:
             if not os.path.exists(os.path.join(model_path, file)):
                 logger.error(f"Required file {file} not found in {model_path}")
                 print(f"Required file {file} not found in {model_path}")
                 return False
+        
+        # Check for either tokenizer.json or tokenizer.model
+        if not (os.path.exists(os.path.join(model_path, 'tokenizer.json')) or 
+                os.path.exists(os.path.join(model_path, 'tokenizer.model'))):
+            logger.error(f"No tokenizer file (tokenizer.json or tokenizer.model) found in {model_path}")
+            print(f"No tokenizer file (tokenizer.json or tokenizer.model) found in {model_path}")
+            return False
+        
+        # Check for model weights file
+        if not (os.path.exists(os.path.join(model_path, 'model.safetensors')) or 
+                os.path.exists(os.path.join(model_path, 'model.safetensors.index.json')) or
+                os.path.exists(os.path.join(model_path, 'pytorch_model.bin')) or
+                os.path.exists(os.path.join(model_path, 'pytorch_model.bin.index.json'))):
+            logger.error(f"No valid model weights found in {model_path}")
+            print(f"No valid model weights found in {model_path}")
+            return False
         
         # Try to load the config first
         try:

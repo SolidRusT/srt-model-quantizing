@@ -47,12 +47,17 @@ def check_model_files(model_path: str) -> bool:
     """
     Verify if the specified model path contains valid model files.
     """
-    required_files = ['config.json', 'tokenizer.json']
+    required_files = ['config.json']
     for file in required_files:
         file_path = find_file(model_path, file)
         if not file_path:
             logger.error(f"Required file {file} not found in {model_path}")
             return False
+    
+    # Check for tokenizer files
+    if not (find_file(model_path, 'tokenizer.json') or find_file(model_path, 'tokenizer.model')):
+        logger.error(f"No tokenizer file (tokenizer.json or tokenizer.model) found in {model_path}")
+        return False
     
     # Check for either pytorch_model.bin, model.safetensors, or sharded model files
     if find_file(model_path, 'pytorch_model.bin'):
