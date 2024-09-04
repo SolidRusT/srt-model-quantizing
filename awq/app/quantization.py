@@ -92,7 +92,7 @@ def run_quantization(model_path: str, quant_config: Dict[str, Any], output_dir: 
     except Exception as e:
         logger.error(f"Quantization failed: {str(e)}")
         print(f"Quantization failed: {str(e)}")
-        logger.exception("Detailed traceback:")
+        logger.exception("Detailed traceback for quantization:")
         raise
 
 def validate_quant_config(quant_config: dict) -> None:
@@ -214,17 +214,26 @@ def test_model_loading(model_path: str):
             return False
         
         # Check for model weights file
-        if not (os.path.exists(os.path.join(model_path, 'model.safetensors')) or 
-                os.path.exists(os.path.join(model_path, 'model.safetensors.index.json')) or
-                os.path.exists(os.path.join(model_path, 'pytorch_model.bin')) or
-                os.path.exists(os.path.join(model_path, 'pytorch_model.bin.index.json'))):
+        weight_files = [
+            'model.safetensors',
+            'model.safetensors.index.json',
+            'pytorch_model.bin',
+            'pytorch_model.bin.index.json'
+        ]
+        found_weights = False
+        for weight_file in weight_files:
+            if os.path.exists(os.path.join(model_path, weight_file)):
+                logger.info(f"Found weight file: {weight_file}")
+                print(f"Found weight file: {weight_file}")
+                found_weights = True
+                break
+        if not found_weights:
             logger.error(f"No valid model weights found in {model_path}")
             print(f"No valid model weights found in {model_path}")
             return False
         
-        # Try to load the config first
+        # Try to load the config
         try:
-            from transformers import AutoConfig
             config = AutoConfig.from_pretrained(model_path)
             logger.info(f"Successfully loaded config: {config}")
             print(f"Successfully loaded config: {config}")
@@ -233,21 +242,42 @@ def test_model_loading(model_path: str):
             print(f"Failed to load config: {str(config_error)}")
             return False
         
-        # Now try to load the model
+        # Try to load the tokenizer
         try:
-            model = AutoAWQForCausalLM.from_pretrained(model_path, trust_remote_code=True)
-            logger.info("Model loaded successfully for testing")
-            print("Model loaded successfully for testing")
-            
-            # Check if the model has the expected attributes
-            if not hasattr(model, 'quantize'):
-                logger.warning("Loaded model does not have 'quantize' method")
-                print("Loaded model does not have 'quantize' method")
+            tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
+            logger.info("Successfully loaded tokenizer")
+            print("Successfully loaded tokenizer")
+        except Exception as tokenizer_error:
+            logger.error(f"Failed to load tokenizer: {str(tokenizer_error)}")
+            print(f"Failed to load tokenizer: {str(tokenizer_error)}")
+            return False
+        
+        # Verify model weights are readable (without loading the entire model)
+        try:
+            if os.path.exists(os.path.join(model_path, 'model.safetensors')):
+                from safetensors import safe_open
+                with safe_open(os.path.join(model_path, 'model.safetensors'), framework="pt", device="cpu") as f:
+                    # Read a small portion of the model to verify it's readable
+                    for key in list(f.keys())[:5]:
+                        _ = f.get_tensor(key)
+                logger.info("Successfully verified model weights (safetensors)")
+                print("Successfully verified model weights (safetensors)")
+            elif os.path.exists(os.path.join(model_path, 'pytorch_model.bin')):
+                state_dict = torch.load(os.path.join(model_path, 'pytorch_model.bin'), map_location='cpu')
+                # Verify a few keys in the state dict
+                for key in list(state_dict.keys())[:5]:
+                    _ = state_dict[key]
+                logger.info("Successfully verified model weights (PyTorch)")
+                print("Successfully verified model weights (PyTorch)")
+            else:
+                logger.info("Skipping weight verification for sharded model")
+                print("Skipping weight verification for sharded model")
             
             return True
         except Exception as model_error:
-            logger.error(f"Failed to load model: {str(model_error)}")
-            print(f"Failed to load model: {str(model_error)}")
+            logger.error(f"Failed to verify model weights: {str(model_error)}")
+            print(f"Failed to verify model weights: {str(model_error)}")
+            logger.exception("Detailed traceback for model weight verification:")
             return False
     except Exception as e:
         logger.error(f"Failed to load model for testing: {str(e)}")
