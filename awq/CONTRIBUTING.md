@@ -33,7 +33,8 @@ We welcome contributions to the SRT Model Quantizing project! This document prov
 2. Add or update tests as necessary.
 3. Run the tests to ensure they pass:
    ```bash
-   python -m unittest discover tests
+   coverage run -m unittest discover tests
+   coverage report -m
    ```
 4. Update documentation if you're changing functionality.
 

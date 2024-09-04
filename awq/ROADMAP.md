@@ -3,10 +3,10 @@
 ## Current Sprint
 
 - [ ] Enhance conversion of PyTorch (.pt) files to safetensor files
-- [ ] Implement handling for multiple safetensor files in a model
-- [ ] Update model validation process to account for multiple safetensor files
+- [ ] Implement handling for single and multiple safetensor files in a model
+- [ ] Update model validation process to account for single and multiple safetensor files
 - [ ] Enhance error handling for large model quantization
-- [ ] Implement progress reporting for long-running quantization processes
+- [ ] Implement progress reporting for long-running conversion processes
 - [ ] Optimize memory usage during quantization
 - [ ] Add support for custom quantization configurations
 - [ ] Improve logging and error reporting

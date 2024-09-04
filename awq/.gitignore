@@ -10,3 +10,10 @@ data/
 logs/
 repos/
 .env
+
+# ignore coverage files
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache

@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch, MagicMock
-from app.model_utils import authenticate_huggingface, download_model, check_model_files, find_file, calculate_checksum, convert_pytorch_to_safetensors, get_model_size, validate_model_checksum, calculate_directory_checksum
+from app.model_utils import authenticate_huggingface, download_model, check_model_files, find_file, get_model_size, validate_model_checksum, calculate_directory_checksum
 
 class TestModelUtils(unittest.TestCase):
     @patch('app.model_utils.login')
@@ -53,11 +53,7 @@ class TestModelUtils(unittest.TestCase):
         self.assertTrue(check_model_files('/path/to/model'))
 
         # Test when a required file is missing
-        mock_find_file.side_effect = [True, False]
-        self.assertFalse(check_model_files('/path/to/model'))
-
-        # Test when no valid model weights are found
-        mock_find_file.side_effect = [True, True, False, False, False]
+        mock_find_file.side_effect = [True, False, False, False, False]
         self.assertFalse(check_model_files('/path/to/model'))
 
     @patch('os.path.exists')
@@ -71,29 +67,6 @@ class TestModelUtils(unittest.TestCase):
         mock_walk.return_value = [('/path/to/model', [], ['other.txt'])]
         result = find_file('/path/to/model', 'file.txt')
         self.assertEqual(result, '')
-
-    @patch('builtins.open', new_callable=unittest.mock.mock_open, read_data=b'test data')
-    @patch('hashlib.md5')
-    def test_calculate_checksum(self, mock_md5, mock_open):
-        mock_md5.return_value.hexdigest.return_value = 'test_checksum'
-        result = calculate_checksum('/path/to/file')
-        self.assertEqual(result, 'test_checksum')
-
-    @patch('os.listdir')
-    @patch('os.path.join')
-    @patch('torch.load')
-    @patch('app.model_utils.safetensors_save_file')
-    @patch('os.remove')
-    def test_convert_pytorch_to_safetensors(self, mock_remove, mock_safetensors_save_file, mock_torch_load, mock_join, mock_listdir):
-        mock_listdir.return_value = ['model.bin', 'model.pt', 'config.json']
-        mock_join.side_effect = lambda *args: '/'.join(args)
-        mock_torch_load.return_value = {'key': 'value'}
-        
-        convert_pytorch_to_safetensors('/path/to/model')
-        
-        mock_safetensors_save_file.assert_any_call({'key': 'value'}, '/path/to/model/model.safetensors')
-        mock_safetensors_save_file.assert_any_call({'key': 'value'}, '/path/to/model/model.safetensors')
-        self.assertEqual(mock_remove.call_count, 2)
 
     @patch('os.walk')
     @patch('os.path.getsize')
@@ -123,6 +96,79 @@ class TestModelUtils(unittest.TestCase):
         mock_sha256.return_value.hexdigest.return_value = 'test_checksum'
         result = calculate_directory_checksum('/path/to/model')
         self.assertEqual(result, 'test_checksum')
+
+    @patch('os.walk')
+    @patch('builtins.open', new_callable=unittest.mock.mock_open, read_data=b'test data')
+    @patch('hashlib.sha256')
+    def test_calculate_directory_checksum(self, mock_sha256, mock_open, mock_walk):
+        mock_walk.return_value = [
+            ('/path/to/model', [], ['file1.txt', 'file2.txt']),
+            ('/path/to/model/subdir', [], ['file3.txt'])
+        ]
+        mock_sha256.return_value.hexdigest.return_value = 'test_checksum'
+        result = calculate_directory_checksum('/path/to/model')
+        self.assertEqual(result, 'test_checksum')
+
+    @patch('app.model_utils.find_file')
+    def test_check_model_files_missing_config(self, mock_find_file):
+        mock_find_file.side_effect = [False, True, True, False, False]
+        self.assertFalse(check_model_files('/path/to/model'))
+
+    @patch('app.model_utils.find_file')
+    def test_check_model_files_missing_tokenizer(self, mock_find_file):
+        mock_find_file.side_effect = [True, False, False, False, False]
+        self.assertFalse(check_model_files('/path/to/model'))
+
+    @patch('app.model_utils.snapshot_download')
+    def test_download_model_network_error(self, mock_snapshot_download):
+        mock_snapshot_download.side_effect = ConnectionError("Network error")
+        with self.assertRaises(ConnectionError) as context:
+            download_model('author', 'model')
+        self.assertIn("Network error", str(context.exception))
+
+    @patch('os.path.exists')
+    def test_find_file_not_found(self, mock_exists):
+        mock_exists.return_value = False
+        result = find_file('/path/to/model', 'nonexistent.txt')
+        self.assertEqual(result, '')
+
+    @patch('os.walk')
+    @patch('os.path.getsize')
+    def test_get_model_size_empty_directory(self, mock_getsize, mock_walk):
+        mock_walk.return_value = []
+        result = get_model_size('/path/to/empty/model')
+        self.assertEqual(result, 0)
+
+    @patch('os.walk')
+    @patch('builtins.open', new_callable=unittest.mock.mock_open, read_data=b'test data')
+    @patch('hashlib.sha256')
+    def test_calculate_directory_checksum_empty_directory(self, mock_sha256, mock_open, mock_walk):
+        mock_walk.return_value = []
+        result = calculate_directory_checksum('/path/to/empty/model')
+        self.assertIsNotNone(result) 
+
+    @patch('app.model_utils.snapshot_download')
+    @patch('app.model_utils.validate_model_checksum')
+    def test_download_model_with_expected_checksum(self, mock_validate, mock_snapshot_download):
+        mock_snapshot_download.return_value = '/path/to/model'
+        mock_validate.return_value = True
+        result = download_model('author', 'model', expected_checksum='test_checksum')
+        self.assertEqual(result, '/path/to/model')
+
+    @patch('app.model_utils.find_file')
+    def test_check_model_files_no_valid_weights(self, mock_find_file):
+        mock_find_file.side_effect = [True, True, False, False, False, False]
+        self.assertFalse(check_model_files('/path/to/model'))
+
+    @patch('os.walk')
+    @patch('builtins.open', new_callable=unittest.mock.mock_open)
+    @patch('hashlib.sha256')
+    def test_calculate_directory_checksum_file_error(self, mock_sha256, mock_open, mock_walk):
+        mock_walk.return_value = [('/path/to/model', [], ['file1.txt'])]
+        mock_open.side_effect = IOError("File read error")
+        mock_sha256.return_value.hexdigest.return_value = 'error_checksum'
+        result = calculate_directory_checksum('/path/to/model')
+        self.assertEqual(result, 'error_checksum')
 
 if __name__ == '__main__':
     unittest.main()
