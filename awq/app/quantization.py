@@ -185,11 +185,43 @@ def test_model_loading(model_path: str):
     try:
         logger.info(f"Testing model loading from {model_path}")
         print(f"Testing model loading from {model_path}")
-        model = AutoAWQForCausalLM.from_pretrained(model_path)
+        
+        # Check if the model path exists
+        if not os.path.exists(model_path):
+            logger.error(f"Model path does not exist: {model_path}")
+            print(f"Model path does not exist: {model_path}")
+            return False
+        
+        # List the contents of the model directory
+        logger.info(f"Contents of {model_path}:")
+        for item in os.listdir(model_path):
+            logger.info(f"- {item}")
+            print(f"- {item}")
+        
+        # Try to load the config first
+        try:
+            from transformers import AutoConfig
+            config = AutoConfig.from_pretrained(model_path)
+            logger.info(f"Successfully loaded config: {config}")
+            print(f"Successfully loaded config: {config}")
+        except Exception as config_error:
+            logger.error(f"Failed to load config: {str(config_error)}")
+            print(f"Failed to load config: {str(config_error)}")
+            return False
+        
+        # Now try to load the model
+        model = AutoAWQForCausalLM.from_pretrained(model_path, trust_remote_code=True)
         logger.info("Model loaded successfully for testing")
         print("Model loaded successfully for testing")
+        
+        # Check if the model has the expected attributes
+        if not hasattr(model, 'quantize'):
+            logger.warning("Loaded model does not have 'quantize' method")
+            print("Loaded model does not have 'quantize' method")
+        
         return True
     except Exception as e:
         logger.error(f"Failed to load model for testing: {str(e)}")
         print(f"Failed to load model for testing: {str(e)}")
+        logger.exception("Detailed traceback:")
         return False
