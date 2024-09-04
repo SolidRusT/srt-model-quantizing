@@ -4,9 +4,8 @@ import os
 import logging
 from typing import Dict, Any
 from awq import AutoAWQForCausalLM
-from transformers import AutoTokenizer, AutoConfig, AutoModelForCausalLM
+from transformers import AutoTokenizer
 import torch
-from safetensors import safe_open
 
 logger = logging.getLogger(__name__)
 
@@ -41,25 +40,23 @@ def run_quantization(model_path: str, quant_config: Dict[str, Any], output_dir: 
             print("WARNING: CUDA is not available. Using CPU for quantization. This will be significantly slower.")
 
         # Load model and tokenizer
-        logger.info(f"Loading model from {model_path}")
-        print(f"Loading model from {model_path}")
-        
-        # Use AutoModelForCausalLM instead of AutoAWQForCausalLM for initial loading
-        model = AutoModelForCausalLM.from_pretrained(
-            model_path,
-            torch_dtype=torch.float16 if cuda_available else torch.float32,
-            low_cpu_mem_usage=True,
-            device_map="auto" if cuda_available else None
-        )
-        logger.info("Model loaded successfully")
-        print("Model loaded successfully")
+        try:
+            model = AutoAWQForCausalLM.from_pretrained(
+                model_path,
+                low_cpu_mem_usage=True,
+                torch_dtype=torch.float16 if cuda_available else torch.float32,
+                device_map="auto" if cuda_available else None
+            )
+        except RuntimeError as e:
+            if "CUDA out of memory" in str(e):
+                logger.error("CUDA out of memory error. The model is too large for your GPU.")
+                print("CUDA out of memory error. The model is too large for your GPU.")
+                raise
+            else:
+                raise
 
-        logger.info(f"Loading tokenizer from {model_path}")
-        print(f"Loading tokenizer from {model_path}")
         tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
-        logger.info("Tokenizer loaded successfully")
-        print("Tokenizer loaded successfully")
-
+        
         # Quantize
         logger.info("Performing AWQ quantization")
         print("Performing AWQ quantization")
