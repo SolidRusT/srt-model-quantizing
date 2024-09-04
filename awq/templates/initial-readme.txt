@@ -1,4 +1,5 @@
 ---
+base_model: {AUTHOR}/{MODEL}
 library_name: transformers
 tags:
 - 4-bit
