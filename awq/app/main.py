@@ -159,12 +159,22 @@ def main(author: str, model: str, quanter: str = None, expected_checksum: str = 
                     return
 
         # After quantization
-        if os.path.exists(os.path.join(awq_model_path, 'model.safetensors')):
+        model_path = os.path.join(awq_model_path, 'model.safetensors')
+        sharded_model_index = os.path.join(awq_model_path, 'model.safetensors.index.json')
+        
+        if os.path.exists(model_path):
             logger.info("AWQ model created successfully.")
             print("AWQ model created successfully.")
+        elif os.path.exists(sharded_model_index):
+            logger.info("AWQ sharded model created successfully.")
+            print("AWQ sharded model created successfully.")
         else:
-            logger.error("AWQ model creation failed. model.safetensors not found in the output directory.")
-            print("AWQ model creation failed. model.safetensors not found in the output directory.")
+            logger.error(
+                "AWQ model creation failed. Neither 'model.safetensors' nor 'model.safetensors.index.json' found in the output directory."
+            )
+            print(
+                "AWQ model creation failed. Neither 'model.safetensors' nor 'model.safetensors.index.json' found in the output directory."
+            )
             return
 
         # Copy config.json and tokenizer files to AWQ model directory if they don't exist
